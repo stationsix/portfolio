@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Brief History of AI</title>
+
+  <!-- React CDN -->
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel (for JSX transformation in browser) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body { margin: 0; padding: 0; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Inline SVG icon components (no external dependency)
+    const Filter = ({ size = 24, className = '' }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+    );
+    const X = ({ size = 24, className = '' }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    );
+    const BookOpen = ({ size = 24, className = '' }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+      </svg>
+    );
+    const ChevronRight = ({ size = 24, className = '' }) => (
+      <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+    );
+
+    const AITimeline = () => {
+      const [selectedEvent, setSelectedEvent] = useState(null);
+      const [activeFilters, setActiveFilters] = useState([]);
+      const [sidebarOpen, setSidebarOpen] = useState(true);
+      const [visibleEra, setVisibleEra] = useState('symbolic');
+
+      useEffect(() => {
+        const handleScroll = () => {
+          const eraElements = document.querySelectorAll('[data-era-id]');
+          let currentEra = 'symbolic';
+          
+          eraElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+              currentEra = el.getAttribute('data-era-id');
+            }
+          });
+          
+          setVisibleEra(currentEra);
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        handleScroll();
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      const topics = ['Language & Text', 'Vision & Media', 'Generative AI', 'Neural Networks', 'Research Milestones', 'Industry & Policy'];
+
+      const keyConcepts = [
+        { title: "Artificial Intelligence (AI)", definition: "The overarching field aiming to create machines that mimic human intelligence, including reasoning, learning, and problem-solving.", examples: [], eras: ['symbolic', 'winter1', 'ml', 'bigdata', 'deep', 'multimodal'] },
+        { title: "Symbolic AI", definition: "Early AI using explicit rules and logic to represent knowledge and make decisions. Uses if-then statements to process information. Also called 'Good Old-Fashioned AI' (GOFAI).", examples: ["MYCIN (medical diagnosis)", "ELIZA (chatbot)", "Expert systems"], eras: ['symbolic', 'winter1'] },
+        { title: "Expert Systems", definition: "AI programs that mimic the decision-making ability of human experts using rules and knowledge bases. Dominated AI in the 1980s but struggled with scaling and maintenance.", examples: ["MYCIN", "DENDRAL", "XCON"], eras: ['winter1'] },
+        { title: "Perceptron", definition: "An early type of artificial neural network invented in 1958. Its limitations (inability to solve non-linear problems) contributed to the first AI winter.", examples: ["Single-layer neural network", "Linear classification"], eras: ['symbolic', 'winter1'] },
+        { title: "Machine Learning (ML)", definition: "AI that learns patterns from data rather than following explicit rules. A subset of AI that enables systems to improve from experience without being explicitly programmed.", examples: ["Spam filters", "Recommendation systems", "Support Vector Machines"], eras: ['winter1', 'ml', 'bigdata', 'deep', 'multimodal'] },
+        { title: "Neural Networks", definition: "Computing systems inspired by biological brains, with layers of interconnected nodes that process and transform data. The foundation of modern deep learning.", examples: ["Backpropagation", "CNNs", "RNNs"], eras: ['winter1', 'ml', 'bigdata', 'deep', 'multimodal'] },
+        { title: "Backpropagation", definition: "A fundamental algorithm that allows neural networks to learn by calculating gradients and adjusting weights. Popularized by Hinton et al. in 1986, it enabled training of multi-layer networks.", examples: ["Training deep networks", "Gradient descent"], eras: ['winter1', 'ml', 'bigdata', 'deep', 'multimodal'] },
+        { title: "Support Vector Machines (SVMs)", definition: "A powerful machine learning method for classification that finds optimal decision boundaries. Dominated ML in the 1990s-2000s before deep learning.", examples: ["Text classification", "Image recognition", "Bioinformatics"], eras: ['ml', 'bigdata'] },
+        { title: "Convolutional Neural Networks (CNNs)", definition: "Neural networks specialized for processing grid-like data such as images. Uses layers that detect increasingly complex features from edges to objects.", examples: ["LeNet", "AlexNet", "Image classification"], eras: ['ml', 'bigdata', 'deep', 'multimodal'] },
+        { title: "Recurrent Neural Networks (RNNs)", definition: "Neural networks designed for sequential data with memory of previous inputs. Used for time series, speech, and text before transformers dominated.", examples: ["Language modeling", "Speech recognition", "Time series prediction"], eras: ['ml', 'bigdata', 'deep'] },
+        { title: "Big Data & Cloud Computing", definition: "The explosion of data availability and cloud computing infrastructure in the 2000s-2010s that made training large AI models feasible.", examples: ["ImageNet dataset", "AWS/Azure/GCP", "Distributed computing"], eras: ['bigdata', 'deep', 'multimodal'] },
+        { title: "Deep Learning", definition: "A subset of ML using neural networks with many layers (hence 'deep') to model complex patterns. Revolutionized AI by dramatically improving performance on vision, speech, and language tasks.", examples: ["Image recognition", "Speech recognition", "AlexNet", "ResNet"], eras: ['bigdata', 'deep', 'multimodal'] },
+        { title: "Reinforcement Learning", definition: "ML approach where agents learn by taking actions and receiving rewards or penalties. Learns optimal behavior through trial and error, excelling at games and robotics.", examples: ["Deep Blue", "AlphaGo", "Game-playing AI", "Robotics"], eras: ['ml', 'bigdata', 'deep', 'multimodal'] },
+        { title: "Transformers", definition: "A deep learning architecture introduced in 2017 that uses 'attention mechanisms' to process data in parallel. Revolutionized NLP and became the foundation of modern LLMs.", examples: ["Attention mechanism", "BERT", "GPT", "Self-attention"], eras: ['deep', 'multimodal'] },
+        { title: "Attention Mechanism", definition: "A technique allowing models to focus on relevant parts of input when making predictions. The key innovation in transformers enabling them to handle long sequences effectively.", examples: ["Transformers", "Machine translation", "Question answering"], eras: ['deep', 'multimodal'] },
+        { title: "Large Language Models (LLMs)", definition: "Transformers trained on vast text datasets to understand and generate human-like language. Can perform tasks with minimal examples (few-shot learning).", examples: ["GPT-2/3/4", "BERT", "Claude", "Gemini"], eras: ['deep', 'multimodal'] },
+        { title: "Few-Shot Learning", definition: "The ability of large models (especially LLMs) to perform new tasks with only a few examples, without additional training. A breakthrough capability of models like GPT-3.", examples: ["GPT-3", "In-context learning", "Prompt engineering"], eras: ['deep', 'multimodal'] },
+        { title: "Generative AI", definition: "AI systems designed to create new, original content (text, images, music, code) based on patterns learned from training data. Can produce human-quality outputs.", examples: ["ChatGPT (text)", "DALL-E (images)", "Stable Diffusion", "GitHub Copilot (code)"], eras: ['deep', 'multimodal'] },
+        { title: "GANs (Generative Adversarial Networks)", definition: "Two neural networks competing: a generator creates content while a discriminator evaluates authenticity. The competition drives both to improve, creating realistic outputs.", examples: ["Deepfakes", "Art generation", "Style transfer", "Image synthesis"], eras: ['deep', 'multimodal'] },
+        { title: "Diffusion Models", definition: "Generative models that learn to reverse a noise-adding process, effectively 'denoising' data to create realistic images. Power state-of-the-art image generation.", examples: ["Stable Diffusion", "DALL-E 2", "Midjourney"], eras: ['multimodal'] },
+        { title: "Multimodal AI", definition: "AI systems that can understand and generate multiple types of data (text, images, audio, video) and understand relationships between them. Represents the current frontier of AI.", examples: ["GPT-4 Vision", "Gemini", "Claude with vision"], eras: ['multimodal'] }
+      ];
+
+      const relevantConcepts = keyConcepts.filter(concept => concept.eras.includes(visibleEra));
+
+      const eras = [
+        {
+          id: 'symbolic',
+          name: '1950s-1960s: Birth of AI and Early Optimism',
+          color: 'bg-blue-200',
+          textColor: 'text-slate-800',
+          events: [
+            { year: 1950, title: "Alan Turing's Imitation Game", description: "Turing proposed the Turing Test to evaluate a machine's ability to exhibit intelligent behavior indistinguishable from that of a human.", topics: ['Research Milestones'], hasDetails: true, detailedDescription: "In his seminal paper 'Computing Machinery and Intelligence,' Alan Turing proposed what became known as the Turing Test or 'Imitation Game.' Rather than asking 'Can machines think?'—a question he considered too vague—Turing reframed it operationally: Can a machine convince a human interrogator that it is human through text-based conversation?\n\nThe test involves a human evaluator conversing with both a machine and a human through text. If the evaluator cannot reliably distinguish which is which, the machine is said to demonstrate intelligent behavior. This elegant formulation sidestepped philosophical debates about consciousness and focused on observable behavior.\n\nTuring's work became foundational to AI, establishing the principle that intelligence could be evaluated through external behavior rather than internal processes. While the test has been criticized—machines can appear intelligent without understanding, and human-like conversation isn't the only form of intelligence—it remains influential in how we think about and evaluate AI systems today.", links: [{ title: "Original Paper: Computing Machinery and Intelligence", url: "https://academic.oup.com/mind/article/LIX/236/433/986238" }, { title: "Stanford Encyclopedia: The Turing Test", url: "https://plato.stanford.edu/entries/turing-test/" }] },
+            { year: 1956, title: "Dartmouth Conference", description: "The term 'Artificial Intelligence' was coined by John McCarthy at this founding conference.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "The Dartmouth Summer Research Project on Artificial Intelligence, held in 1956, is considered the founding event of AI as a field. Organized by John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon, it brought together researchers to explore the hypothesis that 'every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it.'\n\nMcCarthy coined the term 'Artificial Intelligence' for the proposal, deliberately choosing it over alternatives like 'complex information processing.' The name stuck and defined a field. The conference proposal ambitiously stated that significant progress could be made 'if a carefully selected group of scientists work on it together for a summer'—a timeline that proved wildly optimistic.\n\nWhile the conference didn't produce immediate breakthroughs, it established AI as a legitimate field of study, attracted funding, and brought together the pioneers who would shape the field for decades. The optimism of this era—believing human-level AI was just around the corner—would lead to both rapid early progress and eventually the first 'AI winter' when promises went unfulfilled.", links: [{ title: "Dartmouth Conference Proposal (1955)", url: "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf" }, { title: "AI Magazine: The Dartmouth Conference", url: "https://aitopics.org/misc/brief-history" }] },
+            { year: 1958, title: "John McCarthy develops LISP", description: "LISP became the dominant programming language for AI research for decades.", topics: ['Research Milestones'], hasDetails: true, detailedDescription: "John McCarthy developed LISP (LISt Processing) at MIT, creating the second-oldest high-level programming language still in use today. LISP was specifically designed for AI research, built around the manipulation of symbolic expressions and list structures.\n\nLISP introduced revolutionary concepts that shaped both AI and computer science broadly: automatic garbage collection, dynamic typing, first-class functions, and the treatment of code as data (homoiconicity). Its elegant, minimal syntax and powerful abstraction capabilities made it ideal for exploring AI concepts like symbolic reasoning, knowledge representation, and problem-solving.\n\nFor decades, LISP was synonymous with AI research. It dominated the field through the symbolic AI era and into the 1980s. While modern AI has moved toward statistical and neural approaches often using Python, LISP's influence persists—many of its innovations are now standard features in modern programming languages, and it remains influential in areas like automated reasoning and computer science education.", links: [{ title: "John McCarthy's History of LISP", url: "http://jmc.stanford.edu/articles/lisp/lisp.pdf" }, { title: "LISP in AI Research", url: "https://www.britannica.com/technology/LISP-computer-language" }] },
+            { year: 1958, title: "Perceptron Invented", description: "Frank Rosenblatt created the Perceptron, an early neural network that could learn to classify patterns.", topics: ['Neural Networks', 'Research Milestones'], hasDetails: true, detailedDescription: "Frank Rosenblatt's Perceptron, developed at the Cornell Aeronautical Laboratory, was a pioneering attempt to create a machine that could learn like a brain. The Perceptron was a single-layer neural network that could learn to classify inputs into categories by adjusting weights based on errors—a fundamental learning algorithm still used today.\n\nThe initial excitement was enormous. The New York Times reported that the Navy expected the Perceptron to 'be able to walk, talk, see, write, reproduce itself and be conscious of its existence.' Rosenblatt himself was more measured but optimistic, believing perceptrons could eventually recognize speech, translate languages, and make decisions.\n\nHowever, the Perceptron had fundamental limitations: it could only learn linearly separable patterns. It could distinguish between two categories if they could be separated by a straight line, but nothing more complex. This meant it couldn't solve even simple problems like XOR (exclusive OR). When Marvin Minsky and Seymour Papert published their book 'Perceptrons' in 1969 detailing these limitations, enthusiasm crashed and neural network research entered a long winter. What they missed was that multi-layer networks could overcome these limitations—something that wouldn't be practically demonstrated until backpropagation was popularized in the 1980s.", links: [{ title: "The Perceptron: A Probabilistic Model (1958)", url: "https://psycnet.apa.org/record/1959-09865-001" }, { title: "Perceptrons Book Impact", url: "https://news.cornell.edu/stories/2019/09/professors-perceptron-paved-way-ai-60-years-too-soon" }] },
+            { year: 1966, title: "ELIZA by Joseph Weizenbaum", description: "A rule-based chatbot simulating a psychotherapist using pattern-matching.", topics: ['Language & Text'], hasDetails: true, detailedDescription: "Joseph Weizenbaum created ELIZA at MIT as a demonstration of natural language processing, specifically implementing a script called DOCTOR that mimicked a Rogerian psychotherapist. ELIZA used simple pattern-matching and substitution rules—if you said 'I am sad,' it might respond 'Why are you sad?' or 'How long have you been sad?'\n\nWhat shocked Weizenbaum was how seriously people took ELIZA. Users attributed understanding and empathy to the program, sharing intimate details despite knowing it was a computer. His own secretary asked him to leave the room so she could have a private conversation with it. Some psychiatrists even suggested ELIZA could automate therapy. This 'ELIZA effect'—the tendency to attribute human-like understanding to computer programs based on surface behavior—remains relevant today with modern chatbots.\n\nWeizenbaum became deeply concerned about these reactions and later became a critic of AI, warning about attributing too much capability to systems that merely manipulate symbols without understanding. ELIZA demonstrated both the promise of conversational AI and the dangers of overestimating machine intelligence. The pattern-matching techniques were primitive, but the psychological insights about human-computer interaction remain profound.", links: [{ title: "ELIZA - A Computer Program (Original Paper)", url: "https://web.stanford.edu/class/cs124/p36-weizenabaum.pdf" }, { title: "Try ELIZA Online", url: "https://web.njit.edu/~ronkowit/eliza.html" }] },
+            { year: 1969, title: "Perceptron Limitations Exposed", description: "Minsky & Papert's book showed perceptrons couldn't solve non-linear problems like XOR.", topics: ['Neural Networks', 'Industry & Policy'], hasDetails: true, detailedDescription: "Marvin Minsky and Seymour Papert's 1969 book 'Perceptrons: An Introduction to Computational Geometry' provided a rigorous mathematical analysis of single-layer neural networks, proving fundamental limitations. Most famously, they showed perceptrons couldn't learn the XOR function—a simple logical operation where the output is true only when inputs differ. This required a non-linear decision boundary that single-layer networks couldn't represent.\n\nThe book's impact was devastating for neural network research. Funding dried up as the AI community concluded that neural networks were a dead end. This contributed significantly to the first AI winter. However, critics later argued that Minsky and Papert's conclusions were overstated—they focused on single-layer perceptrons while acknowledging that multi-layer networks could overcome these limitations, but dismissed them as impractical to train.\n\nThe irony is that multi-layer networks with backpropagation—developed in the 1980s—could solve XOR and much more complex problems. The 'dark ages' of neural network research from 1969 to the mid-1980s may have set the field back by decades. Today, deep neural networks power most modern AI, vindicating the fundamental approach while proving that the specific limitations Minsky and Papert identified were surmountable.", links: [{ title: "Perceptrons Book (MIT Press)", url: "https://mitpress.mit.edu/9780262631112/perceptrons/" }, { title: "The AI Winters", url: "https://www.historyofinformation.com/detail.php?id=4991" }] }
+          ]
+        },
+        {
+          id: 'winter1',
+          name: '1970s-1980s: AI Winters & Expert Systems',
+          color: 'bg-blue-800',
+          textColor: 'text-white',
+          events: [
+            { year: 1972, title: "MYCIN Expert System", description: "An early medical diagnosis system using a rule engine with ~600 rules.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "MYCIN, developed at Stanford University, represented the pinnacle of expert systems—AI programs that captured human expertise in specific domains using explicit rules. MYCIN diagnosed bacterial infections and recommended antibiotics using about 600 if-then rules encoded from infectious disease specialists. In clinical tests, it matched or exceeded the diagnostic accuracy of human experts.\n\nMYCIN pioneered several innovations: it could explain its reasoning by showing which rules it applied, crucial for medical acceptance. It also handled uncertainty using 'certainty factors,' a predecessor to probabilistic reasoning. When doctors asked why MYCIN recommended a treatment, it could trace back through its logical reasoning, building trust in its recommendations.\n\nDespite its technical success, MYCIN was never deployed in practice, revealing expert systems' fundamental challenges. The 'knowledge acquisition bottleneck' proved severe—extracting and encoding expert knowledge was incredibly time-consuming. Rules had to be manually crafted and updated, making systems brittle and expensive to maintain. When medical knowledge changed, updating MYCIN's rules required significant expert time. These limitations ultimately led to the decline of expert systems in favor of machine learning approaches that could learn from data rather than requiring hand-coded rules.", links: [{ title: "MYCIN: A Rule-Based Expert System", url: "https://www.sciencedirect.com/topics/computer-science/mycin" }, { title: "Expert Systems in Medicine", url: "https://plato.stanford.edu/entries/logic-ai/#ExpeRuleBased" }] },
+            { year: 1974, title: "First AI Winter Begins", description: "Funding for AI research dropped dramatically as early promises went unmet.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "The first AI winter began in 1974 when it became clear that early promises of human-level AI were not going to be fulfilled. The Dartmouth Conference had optimistically predicted that machines would achieve human intelligence within a generation, but by the 1970s, systems remained narrow and brittle, unable to handle real-world complexity.\n\nIn the UK, the Lighthill Report commissioned by Parliament delivered a scathing assessment of AI research, arguing that progress had been disappointing and most research was unlikely to produce practical results. This led to severe cuts in AI funding in Britain. In the United States, DARPA similarly reduced AI funding after concluding that speech recognition and other AI goals were not being met. The term 'AI winter' captures this period of reduced funding, skepticism, and slowed progress.\n\nThe winter was caused by several factors: combinatorial explosion made problems intractable, limited computational power constrained what was possible, and the symbolic AI approach struggled with ambiguity and common-sense reasoning. However, research didn't stop entirely—important work continued in smaller labs, and researchers began exploring alternative approaches like neural networks and statistical methods. This winter lasted roughly until the mid-1980s when expert systems and renewed neural network research brought a temporary thaw.", links: [{ title: "The Lighthill Report (1973)", url: "https://www.chilton-computing.org.uk/inf/literature/reports/lighthill_report/overview.htm" }, { title: "Understanding AI Winters", url: "https://thereader.mitpress.mit.edu/why-ai-went-through-winters-and-how-to-prevent-the-next-one/" }] },
+            { year: 1980, title: "Expert Systems Boom", description: "Companies began deploying expert systems for specialized tasks.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "The early 1980s saw a boom in expert systems as companies discovered they could capture specialized expertise in software. Digital Equipment Corporation's XCON (eXpert CONfigurer) became the poster child for commercial AI, automatically configuring VAX computer systems to customer specifications—a task requiring deep expertise. XCON reportedly saved DEC $25 million annually while operating with 2,500 rules.\n\nThis success sparked an expert systems gold rush. Companies invested billions in AI technology, specialized AI hardware companies emerged (like Symbolics and Lisp Machines), and major corporations established AI divisions. Expert systems spread to areas like financial trading, chemical analysis, geological exploration, and equipment fault diagnosis. Japan's Fifth Generation Computer Project, announced in 1982, aimed to build AI supercomputers, spurring Western governments to fund AI research again.\n\nHowever, the boom contained the seeds of its own bust. Expert systems were expensive to build and maintain, requiring constant updates as knowledge changed. They were brittle—working only within narrow domains and failing catastrophically outside them. The AI hardware companies collapsed as standard workstations became powerful enough. By the late 1980s, disappointment set in again, leading to the second AI winter. The lesson: narrow successes don't necessarily scale to general intelligence.", links: [{ title: "The Rise and Fall of Expert Systems", url: "https://www.sciencedirect.com/topics/computer-science/expert-system" }, { title: "XCON Case Study", url: "https://web.archive.org/web/20130514051021/http://www.aaai.org/ojs/index.php/aimagazine/article/view/551" }] },
+            { year: 1986, title: "Backpropagation Popularized", description: "Geoffrey Hinton and colleagues popularized backpropagation.", topics: ['Neural Networks', 'Research Milestones'], hasDetails: true, detailedDescription: "While backpropagation had been discovered independently multiple times since the 1960s, the 1986 paper 'Learning representations by back-propagating errors' by Rumelhart, Hinton, and Williams brought it to widespread attention and demonstrated its practical power. Backpropagation solved the fundamental problem of how to train multi-layer neural networks: how to assign credit (or blame) to neurons in hidden layers.\n\nThe algorithm works by calculating gradients—how much each weight contributed to the error—and propagating these gradients backward through the network. This allows the network to adjust all its weights simultaneously to reduce error. The key insight was using the chain rule from calculus to efficiently compute these gradients layer by layer.\n\nBackpropagation was crucial to the neural network renaissance. However, limitations remained: networks were still relatively shallow due to the 'vanishing gradient problem,' training was slow, and data was limited. These issues wouldn't be overcome until the deep learning revolution of the 2010s, when GPU acceleration, better architectures, and massive datasets finally allowed the full potential of backpropagation to be realized.", links: [{ title: "Original Paper (1986)", url: "https://www.nature.com/articles/323533a0" }, { title: "Geoffrey Hinton on Backpropagation", url: "https://www.cs.toronto.edu/~hinton/backprop.html" }] },
+            { year: 1987, title: "Second AI Winter Begins", description: "Expert systems proved brittle and expensive to maintain.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "By 1987, the expert systems boom was collapsing into the second AI winter. Companies that had invested heavily in expert systems discovered they were difficult and expensive to maintain. Every time domain knowledge changed—new regulations, updated procedures, fresh medical findings—rules had to be manually rewritten by knowledge engineers. Systems that worked well in testing often failed in production when encountering situations outside their narrow expertise.\n\nThe specialized AI hardware market collapsed spectacularly. Companies like Symbolics, which produced expensive Lisp machines optimized for AI, couldn't compete as standard workstations from Sun and others became powerful enough to run AI software at a fraction of the cost. Symbolics went bankrupt in 1993. The desktop computer revolution made specialized hardware obsolete, but also took AI companies down with it.\n\nMore fundamentally, expert systems hit the limits of the symbolic AI paradigm. Encoding human knowledge explicitly in rules proved impractical for complex domains requiring common sense, dealing with ambiguity, or learning from experience. By 1990, 'AI' had become somewhat toxic in business contexts—companies rebranded AI projects as 'smart systems' or 'cognitive technology.' The winter lasted through the early 1990s, only thawing as machine learning approaches, particularly neural networks and statistical methods, began showing promise again.", links: [{ title: "The Second AI Winter", url: "https://www.historyofinformation.com/detail.php?id=4991" }, { title: "Fall of the AI Hardware Industry", url: "https://thenewstack.io/the-rise-and-fall-of-symbolics-a-short-history-of-lisp-machines/" }] }
+          ]
+        },
+        {
+          id: 'ml',
+          name: '1990s: Machine Learning Emerges from the Ashes',
+          color: 'bg-blue-500',
+          textColor: 'text-white',
+          events: [
+            { year: 1997, title: "Deep Blue defeats Garry Kasparov", description: "IBM's chess-playing system defeated the world champion.", topics: ['Research Milestones'], hasDetails: true, detailedDescription: "When IBM's Deep Blue defeated world chess champion Garry Kasparov 3.5-2.5 in May 1997, it marked the first time a computer defeated a reigning world champion in a standard match. The victory represented a milestone in AI's ability to handle complex strategic tasks, though the approach differed fundamentally from human thinking or modern machine learning.\n\nDeep Blue was a brute-force system, evaluating 200 million chess positions per second using custom-designed chips. It combined massive computation with sophisticated evaluation functions hand-crafted by chess grandmasters to assess position quality. The system could look ahead 10-12 moves on average, far deeper than humans. Kasparov later controversially claimed he saw evidence of human intervention, particularly noting moves in Game 2 that seemed too sophisticated for mechanical calculation.\n\nDespite its limitations—Deep Blue couldn't learn from games or transfer its chess knowledge elsewhere—the victory captured public imagination and demonstrated that with enough computational power and clever engineering, machines could match humans in tasks requiring deep strategic thinking. The match also raised questions about the nature of intelligence: Was Deep Blue truly 'intelligent,' or merely a very fast calculator following programmed rules? This debate continues with modern AI, where systems achieve superhuman performance through statistical pattern matching rather than human-like reasoning.", links: [{ title: "Deep Blue Overview (IBM)", url: "https://www.ibm.com/ibm/history/ibm100/us/en/icons/deepblue/" }, { title: "Kasparov vs Deep Blue: The Match", url: "https://www.chess.com/article/view/deep-blue-kasparov-chess" }] },
+            { year: 1997, title: "LSTM Networks Introduced", description: "Solved the vanishing gradient problem in RNNs.", topics: ['Neural Networks', 'Language & Text'], hasDetails: true, detailedDescription: "Sepp Hochreiter and Jürgen Schmidhuber introduced Long Short-Term Memory (LSTM) networks in 1997, solving a fundamental problem that had plagued recurrent neural networks: the vanishing gradient problem. When training RNNs on sequences, gradients used for learning would shrink exponentially as they propagated backward through time, making it nearly impossible to learn long-range dependencies.\n\nLSTMs introduced a clever architecture with 'gates' (input, forget, and output gates) that control information flow through the network. These gates allow the network to selectively remember or forget information, maintaining important context over long sequences.\n\nFor over 15 years, LSTMs were the dominant architecture for sequence modeling, powering applications from speech recognition to machine translation to video captioning. The 2017 introduction of transformers, which process sequences in parallel using attention mechanisms, largely superseded LSTMs for language tasks, though LSTMs remain relevant for certain time series and signal processing applications.", links: [{ title: "Long Short-Term Memory (Original Paper)", url: "https://www.bioinf.jku.at/publications/older/2604.pdf" }, { title: "Understanding LSTM Networks", url: "https://colah.github.io/posts/2015-08-Understanding-LSTMs/" }] },
+            { year: 1998, title: "LeNet-5 by Yann LeCun", description: "An early CNN successfully deployed for reading handwritten digits.", topics: ['Vision & Media', 'Neural Networks'], hasDetails: true, detailedDescription: "Yann LeCun's LeNet-5, developed at AT&T Bell Labs, was a pioneering convolutional neural network successfully deployed for practical commercial use—reading handwritten digits on bank checks. The system processed tens of millions of checks in the 1990s, proving neural networks could handle real-world visual recognition tasks reliably and at scale.\n\nLeNet-5 introduced architectural innovations that became standard in modern CNNs: convolutional layers that learn spatial hierarchies of features, pooling layers that add translation invariance, and end-to-end learning where the network learned features automatically.\n\nDespite LeNet-5's success, neural networks remained somewhat on the margins of AI research through the 2000s. It wasn't until the 2012 AlexNet breakthrough that convolutional neural networks finally revolutionized computer vision. LeNet-5 was ahead of its time—the architectural principles were sound, but the ecosystem needed to catch up.", links: [{ title: "Gradient-Based Learning Applied to Document Recognition (LeNet Paper)", url: "http://yann.lecun.com/exdb/publis/pdf/lecun-01a.pdf" }, { title: "Yann LeCun's Homepage", url: "http://yann.lecun.com/" }] },
+            { year: 1998, title: "Support Vector Machines Gain Prominence", description: "SVMs became the go-to method for classification tasks.", topics: ['Research Milestones'], hasDetails: true, detailedDescription: "Support Vector Machines, developed by Vladimir Vapnik and colleagues in the 1990s, became the dominant machine learning technique from the late 1990s through the 2000s. SVMs offered something rare in machine learning: strong theoretical guarantees based on statistical learning theory, combined with excellent practical performance across diverse problems.\n\nThe key insight behind SVMs was elegant: find the decision boundary (hyperplane) that maximizes the margin—the distance to the nearest data points of each class. The 'kernel trick' allowed SVMs to find non-linear boundaries by implicitly mapping data to higher-dimensional spaces.\n\nWhen deep learning emerged with AlexNet in 2012, demonstrating that neural networks could automatically learn better features from raw data, SVMs quickly lost their dominance. Today, deep learning has largely superseded SVMs except in specific domains with limited data.", links: [{ title: "Support Vector Machines Explained", url: "https://scikit-learn.org/stable/modules/svm.html" }, { title: "The Nature of Statistical Learning Theory (Vapnik)", url: "https://link.springer.com/book/10.1007/978-1-4757-2440-0" }] }
+          ]
+        },
+        {
+          id: 'bigdata',
+          name: '2000s-Early 2010s: Big Data & Computing Power',
+          color: 'bg-purple-500',
+          textColor: 'text-white',
+          events: [
+            { year: 2006, title: "Geoffrey Hinton coins 'Deep Learning'", description: "Hinton's work on deep belief networks reignited interest in neural networks.", topics: ['Neural Networks', 'Research Milestones'], hasDetails: true, detailedDescription: "Geoffrey Hinton's 2006 paper on deep belief networks marked a turning point for neural networks. Hinton showed that deep neural networks could be trained effectively using unsupervised pre-training followed by supervised fine-tuning. This overcame the challenge of vanishing gradients that had made deep networks impractical.\n\nThe rebranding to 'deep learning' was deliberate and strategic. 'Neural networks' carried baggage from previous AI winters. 'Deep learning' suggested something new and powerful—networks with many layers that could learn hierarchical representations of data.\n\nHinton's work arrived at an opportune moment. Computational power had grown dramatically (especially GPUs), datasets were getting larger, and the machine learning community was ready for new approaches. Hinton, along with Yann LeCun and Yoshua Bengio, would later win the 2018 Turing Award for their deep learning contributions.", links: [{ title: "A Fast Learning Algorithm for Deep Belief Nets", url: "https://www.cs.toronto.edu/~hinton/absps/fastnc.pdf" }, { title: "Turing Award: Hinton, LeCun, Bengio", url: "https://awards.acm.org/about/2018-turing" }] },
+            { year: 2009, title: "Netflix Prize Spurs ML Innovation", description: "A $1 million competition attracted thousands of teams.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "The Netflix Prize, launched in 2006 and concluded in 2009, offered $1 million to any team that could improve Netflix's recommendation algorithm by 10%. The competition attracted over 40,000 teams from 186 countries. Ensemble methods—combining multiple diverse models—proved crucial.\n\nThe competition advanced the field significantly and demonstrated that marginal improvements in accuracy translated to real business value. It popularized machine learning competitions (leading to platforms like Kaggle), demonstrated ML's commercial value, and trained thousands of practitioners in advanced techniques.", links: [{ title: "Netflix Prize Overview", url: "https://www.netflixprize.com/" }, { title: "The Netflix Prize: How a $1M Contest Changed Recommender Systems", url: "https://www.wired.com/2012/04/netflix-prize-costs/" }] },
+            { year: 2009, title: "ImageNet Dataset Created", description: "Fei-Fei Li's team created ImageNet with millions of labeled images.", topics: ['Vision & Media', 'Research Milestones'], hasDetails: true, detailedDescription: "Fei-Fei Li and her team at Stanford created ImageNet, a dataset containing over 14 million hand-labeled images across 20,000+ categories. The creation was a massive undertaking, using Amazon Mechanical Turk to coordinate human labeling at unprecedented scale. Li's insight was that AI progress required not just better algorithms, but much richer data to learn from.\n\nThe annual ImageNet Large Scale Visual Recognition Challenge (ILSVRC), launched in 2010, became the Olympics of computer vision. Then came 2012—AlexNet achieved 16% error, crushing competitors and sparking the deep learning revolution.\n\nImageNet demonstrated that large labeled datasets were crucial for training deep networks, spurring creation of similar datasets for other domains. The pre-trained models from ImageNet became the starting point for countless applications through transfer learning.", links: [{ title: "ImageNet: A Large-Scale Hierarchical Image Database", url: "https://image-net.org/static_files/papers/imagenet_cvpr09.pdf" }, { title: "ImageNet Official Site", url: "https://www.image-net.org/" }] },
+            { year: 2011, title: "IBM Watson Wins Jeopardy!", description: "Watson defeated human champions showcasing NLP advances.", topics: ['Language & Text', 'Research Milestones'], hasDetails: true, detailedDescription: "IBM's Watson defeated Jeopardy! champions Ken Jennings and Brad Rutter in February 2011, winning $1 million. Unlike Deep Blue's chess victory, Watson had to understand natural language questions (often with wordplay and ambiguity), search through millions of documents, and respond within seconds.\n\nWatson combined over 100 different algorithms for natural language processing, information retrieval, knowledge representation, and reasoning. It ran on 90 IBM Power servers with 16 terabytes of RAM, processing information at 80 teraflops.\n\nWatson's victory generated enormous excitement about AI's commercial potential. IBM aggressively marketed Watson for cancer diagnosis and drug discovery. Results were mixed, but Watson demonstrated that AI could handle natural language at impressive scale and complexity.", links: [{ title: "IBM Watson Jeopardy! Overview", url: "https://www.ibm.com/watson/advantage-reports/future-of-artificial-intelligence/ai-in-jeopardy.html" }, { title: "Deep QA Project (Watson Technical Paper)", url: "https://www.aaai.org/ojs/index.php/aimagazine/article/view/2303" }] },
+            { year: 2012, title: "ImageNet Challenge: AlexNet Revolution", description: "AlexNet sparked the deep learning revolution.", topics: ['Vision & Media', 'Neural Networks', 'Research Milestones'], hasDetails: true, detailedDescription: "AlexNet's victory in the 2012 ImageNet Large Scale Visual Recognition Challenge marks the beginning of the deep learning revolution. The network achieved 85% top-5 accuracy, crushing the second-place competitor by over 10 percentage points.\n\nWhat made AlexNet revolutionary wasn't just its accuracy but how it achieved it: using a deep convolutional neural network (8 layers) trained on two NVIDIA GTX 580 GPUs. Alex Krizhevsky, Ilya Sutskever, and Geoffrey Hinton showed that with enough data, enough computation, and the right architecture, neural networks could dramatically outperform traditional methods.\n\nAlexNet introduced several innovations that became standard: ReLU activation functions for faster training, dropout for regularization, and data augmentation. Within two years, deep learning had taken over computer vision, and by 2015, it was spreading to speech recognition, natural language processing, and beyond.", links: [{ title: "ImageNet Classification with Deep CNNs (Original Paper)", url: "https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html" }, { title: "The ImageNet Moment", url: "https://www.quantamagazine.org/where-we-see-shapes-ai-sees-textures-20190701/" }] }
+          ]
+        },
+        {
+          id: 'deep',
+          name: '2014-2020: The Deep Learning Revolution',
+          color: 'bg-blue-600',
+          textColor: 'text-white',
+          events: [
+            { year: 2014, title: "Generative Adversarial Networks (GANs)", description: "Ian Goodfellow introduced GANs for creating realistic content.", topics: ['Generative AI', 'Vision & Media', 'Research Milestones'], hasDetails: true, detailedDescription: "Ian Goodfellow introduced Generative Adversarial Networks in 2014, bringing a game-theoretic approach to generative modeling. The elegant idea: pit two neural networks against each other—a generator trying to create realistic images and a discriminator trying to distinguish real from fake.\n\nGANs produced remarkably realistic images, far surpassing previous generative models. They could generate photorealistic faces, transfer artistic styles between images, and create realistic video.\n\nYann LeCun called GANs 'the most interesting idea in machine learning in the last 10 years.' However, they proved notoriously difficult to train. While diffusion models have recently surpassed GANs for some tasks, the adversarial framework remains influential.", links: [{ title: "Generative Adversarial Networks (Original Paper)", url: "https://arxiv.org/abs/1406.2661" }, { title: "GAN Lab (Interactive Visualization)", url: "https://poloclub.github.io/ganlab/" }] },
+            { year: 2015, title: "ResNet: Training Very Deep Networks", description: "Microsoft's ResNet introduced skip connections.", topics: ['Vision & Media', 'Neural Networks', 'Research Milestones'], hasDetails: true, detailedDescription: "Microsoft Research's Residual Networks (ResNet) solved a puzzling problem: deeper neural networks should theoretically be more powerful, but in practice, they were harder to train. Kaiming He and colleagues introduced 'skip connections'—paths that allow information to bypass layers, helping gradients flow backward through very deep networks.\n\nThis allowed ResNet to train networks with 152 layers. ResNet won ImageNet 2015 with 3.6% error—surpassing human-level performance (estimated at ~5% error). This was a watershed moment: AI had officially exceeded human capability on a widely-recognized visual recognition benchmark.\n\nSkip connections became ubiquitous, adopted across computer vision architectures and beyond (even transformers use residual connections).", links: [{ title: "Deep Residual Learning for Image Recognition", url: "https://arxiv.org/abs/1512.03385" }, { title: "ResNet Explained", url: "https://towardsdatascience.com/introduction-to-resnets-c0a830a288a4" }] },
+            { year: 2016, title: "AlphaGo defeats Lee Sedol", description: "DeepMind's AlphaGo defeated the world champion at Go.", topics: ['Neural Networks', 'Research Milestones'], hasDetails: true, detailedDescription: "When DeepMind's AlphaGo defeated Lee Sedol 4-1 in March 2016, it accomplished what many experts thought was still a decade away. Go has more possible positions than atoms in the universe—far too many to solve through brute-force search.\n\nAlphaGo combined multiple AI techniques: deep neural networks learned to evaluate board positions by studying millions of human games, then improved through reinforcement learning—playing millions of games against itself. Move 37 in Game 2 became legendary: a placement that shocked commentators, deemed to have only a 1 in 10,000 chance of being played by a human.\n\nAlphaGo demonstrated that AI could master domains requiring intuition and long-term strategic thinking, not just calculation.", links: [{ title: "Mastering the game of Go with deep neural networks (Nature)", url: "https://www.nature.com/articles/nature16961" }, { title: "AlphaGo Documentary", url: "https://www.alphagomovie.com/" }] },
+            { year: 2017, title: "Transformers: 'Attention is All You Need'", description: "Google introduced the transformer architecture.", topics: ['Neural Networks', 'Language & Text', 'Research Milestones'], hasDetails: true, detailedDescription: "The 2017 paper 'Attention is All You Need' by Vaswani et al. at Google introduced the transformer architecture, arguably the most important AI innovation of the past decade. Transformers solved a fundamental limitation of previous neural networks for language: RNNs processed text sequentially, one word at a time, making them slow and unable to capture long-range dependencies.\n\nTransformers introduced 'self-attention,' allowing the model to weigh the importance of every word in relation to every other word simultaneously, processing entire sequences in parallel. Models could capture context much better, and training could be massively parallelized on GPUs.\n\nThe impact was immediate and profound. Within a few years, essentially every major AI system—GPT-4, Claude, Gemini—was built on transformer architecture.", links: [{ title: "Attention Is All You Need (Original Paper)", url: "https://arxiv.org/abs/1706.03762" }, { title: "The Illustrated Transformer (Explainer)", url: "https://jalammar.github.io/illustrated-transformer/" }] },
+            { year: 2018, title: "BERT: Bidirectional Language Understanding", description: "Google's BERT revolutionized NLP.", topics: ['Language & Text', 'Neural Networks'], hasDetails: true, detailedDescription: "BERT (Bidirectional Encoder Representations from Transformers) from Google AI represented a breakthrough in how language models understand context. Previous models processed text in one direction—left to right. BERT was trained bidirectionally, using a 'masked language model' objective where it predicted randomly masked words using context from both sides.\n\nBERT achieved state-of-the-art results across 11 NLP tasks. The key was pre-training on massive text (all of Wikipedia plus books), then fine-tuning on specific tasks with relatively little data.\n\nBERT sparked a cambrian explosion of transformer variants. Google integrated it into Search in 2019, improving understanding of search queries.", links: [{ title: "BERT: Pre-training of Deep Bidirectional Transformers", url: "https://arxiv.org/abs/1810.04805" }, { title: "Google AI Blog: Open Sourcing BERT", url: "https://research.google/blog/open-sourcing-bert-state-of-the-art-pre-training-for-natural-language-processing/" }] },
+            { year: 2018, title: "OpenAI GPT-2", description: "Demonstrated surprisingly coherent text generation.", topics: ['Language & Text', 'Generative AI'], hasDetails: true, detailedDescription: "GPT-2, released by OpenAI in February 2019, was a 1.5 billion parameter transformer language model trained simply to predict the next word in text. Despite this straightforward objective, GPT-2 displayed surprisingly sophisticated text generation—producing coherent paragraphs and showing glimmers of tasks it wasn't explicitly trained for.\n\nOpenAI initially released only a smaller version due to concerns about malicious use, worrying GPT-2 could generate convincing fake news at scale. This 'staged release' strategy was controversial—some called it a publicity stunt.\n\nGPT-2 also validated the 'scaling hypothesis'—bigger models trained on more data showed qualitatively different capabilities, paving the way for GPT-3.", links: [{ title: "Better Language Models and Their Implications", url: "https://openai.com/index/better-language-models/" }, { title: "GPT-2: 1.5B Release", url: "https://openai.com/index/gpt-2-1-5b-release/" }] }
+          ]
+        },
+        {
+          id: 'multimodal',
+          name: '2020-Present: Multimodal AI & Democratization',
+          color: 'bg-pink-500',
+          textColor: 'text-white',
+          events: [
+            { year: 2020, title: "OpenAI GPT-3: Scale Changes Everything", description: "GPT-3 demonstrated few-shot learning at massive scale.", topics: ['Language & Text', 'Generative AI', 'Research Milestones'], hasDetails: true, detailedDescription: "GPT-3's release in June 2020 represented a paradigm shift: instead of training specialized models for each task, one massive general-purpose model could perform hundreds of tasks by simply being shown a few examples. With 175 billion parameters, GPT-3 demonstrated 'emergent capabilities' that smaller models lacked entirely.\n\nThe breakthrough was few-shot learning: give GPT-3 a few examples and it could continue the pattern. This worked for tasks it had never been explicitly trained on—from writing code to composing poetry to answering trivia.\n\nGPT-3 sparked intense debate about the nature of AI progress and made 'scaling laws' a central focus: research showing that model performance improves predictably with more data, compute, and parameters.", links: [{ title: "Language Models are Few-Shot Learners (GPT-3 Paper)", url: "https://arxiv.org/abs/2005.14165" }, { title: "OpenAI GPT-3 Overview", url: "https://openai.com/index/gpt-3-apps/" }] },
+            { year: 2021, title: "DALL-E and CLIP", description: "Introduced text-to-image generation breakthroughs.", topics: ['Vision & Media', 'Generative AI', 'Research Milestones'], hasDetails: true, detailedDescription: "OpenAI released DALL-E and CLIP in January 2021, demonstrating multimodal AI that could bridge text and images. DALL-E could generate images from text descriptions—'an armchair in the shape of an avocado'—combining concepts in creative ways.\n\nCLIP learned to understand relationships between images and text by training on 400 million image-text pairs. Unlike traditional computer vision models, CLIP could handle arbitrary text descriptions without being explicitly trained on specific phrases.\n\nTogether, they showed AI could develop sophisticated multimodal understanding. CLIP became foundational for many subsequent systems, including Stable Diffusion.", links: [{ title: "DALL-E: Creating Images from Text", url: "https://openai.com/index/dall-e/" }, { title: "CLIP: Connecting Text and Images", url: "https://openai.com/index/clip/" }] },
+            { year: 2022, title: "Stable Diffusion", description: "Democratized AI-generated art through open source.", topics: ['Vision & Media', 'Generative AI', 'Industry & Policy'], hasDetails: true, detailedDescription: "Stable Diffusion, released by Stability AI in August 2022, brought high-quality AI image generation to the masses through open-source release. Unlike DALL-E 2, it could be downloaded and run on consumer hardware.\n\nThe open-source nature spawned an explosion of tools, fine-tuned versions, and creative applications. However, it also brought controversy around artist rights, copyright, and economic impacts on creative professionals.", links: [{ title: "Stable Diffusion Announcement", url: "https://stability.ai/news/stable-diffusion-public-release" }, { title: "Stable Diffusion on GitHub", url: "https://github.com/Stability-AI/stablediffusion" }] },
+            { year: 2022, title: "ChatGPT Launch", description: "Brought AI to the mainstream with 100M users in 2 months.", topics: ['Language & Text', 'Generative AI', 'Industry & Policy'], hasDetails: true, detailedDescription: "ChatGPT's launch on November 30, 2022, marked AI's true mainstream moment. Built on GPT-3.5 with RLHF, it reached 1 million users in 5 days and 100 million by January 2023—the fastest-growing consumer application in history.\n\nChatGPT triggered an AI arms race among tech giants and sparked urgent discussions about AI's societal impacts—education, misinformation, job displacement, and safety.", links: [{ title: "Introducing ChatGPT", url: "https://openai.com/index/chatgpt/" }] },
+            { year: 2022, title: "DeepMind's AlphaFold 2", description: "Solved the 50-year-old protein folding problem.", topics: ['Research Milestones'], hasDetails: true, detailedDescription: "DeepMind's AlphaFold 2 effectively solved the protein folding problem—predicting 3D protein structures from amino acid sequences—that had stumped biologists for 50 years. In the CASP14 competition, AlphaFold achieved median accuracy comparable to experimental methods, earning Demis Hassabis and John Jumper the 2024 Nobel Prize in Chemistry.\n\nDeepMind released structures for 200+ million proteins—essentially all known proteins—making this knowledge freely available to researchers worldwide. Drug discovery accelerated, with companies using AlphaFold to design therapeutics.\n\nAlphaFold exemplifies AI's potential for scientific discovery—not replacing human scientists, but providing tools that dramatically accelerate research.", links: [{ title: "AlphaFold Protein Structure Database", url: "https://alphafold.ebi.ac.uk/" }, { title: "Highly accurate protein structure prediction with AlphaFold", url: "https://www.nature.com/articles/s41586-021-03819-2" }] },
+            { year: 2023, title: "OpenAI GPT-4", description: "Multimodal reasoning at human expert levels.", topics: ['Language & Text', 'Vision & Media', 'Generative AI', 'Research Milestones'], hasDetails: true, detailedDescription: "GPT-4, released in March 2023, demonstrated dramatically improved reasoning, reduced hallucinations, and multimodal capabilities. It scored in the 90th percentile on the bar exam and could analyze images in context.\n\nGPT-4 established new benchmarks for AI capability while highlighting that even impressive systems still have limitations—they hallucinate facts, struggle with novel reasoning, and lack true understanding.", links: [{ title: "GPT-4 Technical Report", url: "https://arxiv.org/abs/2303.08774" }, { title: "GPT-4", url: "https://openai.com/index/gpt-4/" }] },
+            { year: 2023, title: "Google Gemini Launch", description: "Native multimodality processing text, images, audio, and video.", topics: ['Language & Text', 'Vision & Media', 'Generative AI', 'Industry & Policy'], hasDetails: true, detailedDescription: "Google's Gemini, launched in December 2023, was designed from the ground up to process text, images, audio, and video natively. Available in three sizes (Ultra, Pro, Nano), it represented Google's strategy of deeply integrating AI across its ecosystem.\n\nGemini's video understanding capabilities were particularly impressive, analyzing hours of content and answering questions about visual details.", links: [{ title: "Introducing Gemini", url: "https://blog.google/technology/ai/google-gemini-ai/" }, { title: "Gemini Technical Report", url: "https://arxiv.org/abs/2312.11805" }] },
+            { year: 2024, title: "Anthropic Claude 3", description: "Demonstrated that capability and safety could advance together.", topics: ['Language & Text', 'Generative AI', 'Industry & Policy'], hasDetails: true, detailedDescription: "Anthropic launched the Claude 3 family in March 2024: Opus (most capable), Sonnet (balanced), and Haiku (fastest). Claude 3 emphasized Constitutional AI—training models to be helpful, harmless, and honest based on explicit principles.\n\nClaude's success validated that responsible AI development could be commercially viable, not just ethically important.", links: [{ title: "Introducing the Claude 3 Model Family", url: "https://www.anthropic.com/news/claude-3-family" }, { title: "Constitutional AI", url: "https://www.anthropic.com/index/constitutional-ai-harmlessness-from-ai-feedback" }] },
+            { year: 2024, title: "OpenAI o1: Reasoning Models", description: "Introduced 'chain of thought' reasoning for harder problems.", topics: ['Language & Text', 'Generative AI', 'Research Milestones'], hasDetails: true, detailedDescription: "OpenAI's o1 models, released in September 2024, represented a paradigm shift: rather than responding immediately, o1 'thinks'—spending seconds or even minutes working through problems using internal chains of reasoning.\n\no1 excelled where previous models struggled: PhD-level physics problems, advanced mathematics, complex coding challenges. On competitive programming benchmarks, o1 reached the 89th percentile, compared to GPT-4's 11th percentile.\n\nThis 'slow AI' approach challenged assumptions that faster is always better and suggested that scaling compute during inference might be as important as scaling training compute.", links: [{ title: "Learning to Reason with LLMs", url: "https://openai.com/index/learning-to-reason-with-llms/" }, { title: "OpenAI o1 System Card", url: "https://openai.com/index/openai-o1-system-card/" }] },
+            { year: 2025, title: "Stargate Project: $500B AI Infrastructure", description: "OpenAI, SoftBank, Oracle, and MGX announced a $500 billion investment in AI infrastructure.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "In January 2025, OpenAI CEO Sam Altman, SoftBank CEO Masayoshi Son, and President Donald Trump announced the Stargate Project—a joint venture planning to invest $500 billion in AI infrastructure across the United States by 2029.\n\nThe scale was unprecedented: $500 billion represents the largest private infrastructure investment in American history. The project reflects escalating compute requirements for frontier AI models and recognition of AI as strategic infrastructure.\n\nStargate raised questions about energy consumption, concentration of AI capabilities, and geopolitical implications.", links: [{ title: "Stargate Project Announcement", url: "https://openai.com/index/announcing-the-stargate-project/" }] },
+            { year: 2025, title: "AI Agents Emerge as Major Trend", description: "The industry shifted focus from chatbots to autonomous AI agents capable of multi-step tasks.", topics: ['Generative AI', 'Industry & Policy'], hasDetails: true, detailedDescription: "Throughout 2025, the AI industry's focus shifted from conversational AI to autonomous agents—systems that could plan, execute multi-step tasks, use tools, and operate with minimal human oversight.\n\nMultiple technical advances enabled this shift: improved long-context windows, better tool use, enhanced planning capabilities, and reliability improvements. Anthropic's Claude demonstrated 'computer use'—controlling a computer directly through screenshots and actions.\n\nAgents promised to automate entire workflows, not just individual tasks. The agent trend suggested AI was transitioning from tool to teammate.", links: [{ title: "Introducing computer use, a new Claude 3.5 Sonnet capability", url: "https://www.anthropic.com/news/3-5-sonnet-computer-use" }] },
+            { year: 2025, title: "Sora Video Generation by OpenAI", description: "OpenAI's Sora text-to-video model created realistic videos up to a minute long.", topics: ['Vision & Media', 'Generative AI'], hasDetails: true, detailedDescription: "OpenAI's Sora, released in 2025, brought text-to-video generation to a new level of realism. From text prompts, Sora generated videos up to 60 seconds long with coherent motion, consistent characters, and complex scene dynamics.\n\nSora raised serious concerns about synthetic media and deepfakes. OpenAI approached Sora's release cautiously, implementing watermarking, limiting access, and developing detection tools.\n\nSora represented both amazing progress and a new frontier in managing synthetic media's societal impacts.", links: [{ title: "Sora: Creating video from text", url: "https://openai.com/index/sora/" }] },
+            { year: 2026, title: "AI in Scientific Research Accelerates", description: "AI became integral to cutting-edge research across multiple fields.", topics: ['Research Milestones', 'Industry & Policy'], hasDetails: true, detailedDescription: "By early 2026, AI had become integral to cutting-edge scientific research. Following AlphaFold's success, AI systems were accelerating discovery across diverse fields—materials science, drug discovery, climate science.\n\nIn materials science, AI predicted new compounds dramatically shortening discovery timelines. Climate science used AI to analyze vast satellite data and improve predictions. Drug discovery labs used AI to design molecules and optimize trials.\n\nThis wasn't AI replacing scientists, but AI as a powerful tool amplifying human capabilities. By 2026, major research institutions considered AI literacy essential for scientists.", links: [{ title: "AI for Science", url: "https://www.nature.com/collections/aiforsci" }, { title: "DeepMind for Science", url: "https://deepmind.google/discover/blog/category/science/" }] }
+          ]
+        }
+      ];
+
+      const toggleFilter = (topic) => {
+        setActiveFilters(prev => 
+          prev.includes(topic) ? prev.filter(t => t !== topic) : [...prev, topic]
+        );
+      };
+
+      const getEventStyle = (event) => {
+        const isFiltered = activeFilters.length > 0 && !event.topics.some(t => activeFilters.includes(t));
+        return isFiltered ? 'opacity-30' : 'opacity-100';
+      };
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="fixed top-4 right-4 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition"
+            title={sidebarOpen ? "Close Key Concepts" : "Open Key Concepts"}
+          >
+            {sidebarOpen ? <ChevronRight size={24} /> : <BookOpen size={24} />}
+          </button>
+
+          <div className={`fixed top-0 right-0 h-full bg-white shadow-2xl transition-transform duration-300 z-40 ${
+            sidebarOpen ? 'translate-x-0' : 'translate-x-full'
+          }`} style={{ width: '400px' }}>
+            <div className="p-6 h-full overflow-y-auto">
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen size={28} className="text-blue-600" />
+                <h2 className="text-2xl font-bold text-slate-800">Key Concepts</h2>
+              </div>
+              
+              <div className={`mb-4 text-sm p-3 rounded-lg border-2 ${
+                eras.find(e => e.id === visibleEra)?.color || 'bg-blue-50'
+              } ${
+                eras.find(e => e.id === visibleEra)?.textColor || 'text-slate-800'
+              }`}>
+                <span className="font-bold">{eras.find(e => e.id === visibleEra)?.name || 'current era'}</span>
+              </div>
+              
+              <div className="space-y-4">
+                {relevantConcepts.map((concept, idx) => (
+                  <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2 bg-slate-50 rounded-r">
+                    <h3 className="font-bold text-lg text-slate-800 mb-2">{concept.title}</h3>
+                    <p className="text-sm text-slate-600 mb-2 leading-relaxed">{concept.definition}</p>
+                    {concept.examples.length > 0 && (
+                      <div className="text-xs text-slate-500">
+                        <span className="font-semibold">Examples:</span> {concept.examples.join(', ')}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className={`transition-all duration-300 ${sidebarOpen ? 'mr-[400px]' : 'mr-0'}`}>
+            <div className="max-w-5xl mx-auto mb-12">
+              <h1 className="text-6xl font-black italic text-center mb-8 text-slate-800">
+                A BRIEF HISTORY OF AI
+              </h1>
+              
+              <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
+                <Filter size={20} className="text-slate-600" />
+                {topics.map(topic => (
+                  <button
+                    key={topic}
+                    onClick={() => toggleFilter(topic)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition ${
+                      activeFilters.includes(topic)
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-white text-slate-700 hover:bg-slate-200 shadow'
+                    }`}
+                  >
+                    {topic}
+                  </button>
+                ))}
+                {activeFilters.length > 0 && (
+                  <button
+                    onClick={() => setActiveFilters([])}
+                    className="px-4 py-2 rounded-full text-sm font-medium bg-red-500 text-white hover:bg-red-600 shadow-lg"
+                  >
+                    Clear Filters
+                  </button>
+                )}
+              </div>
+              {activeFilters.length > 0 && (
+                <div className="text-center text-sm text-slate-600">
+                  Filtering by: {activeFilters.join(', ')}
+                </div>
+              )}
+            </div>
+
+            <div className="max-w-5xl mx-auto">
+              {eras.map((era) => {
+                const visibleEvents = activeFilters.length > 0 
+                  ? era.events.filter(e => e.topics.some(t => activeFilters.includes(t)))
+                  : era.events;
+
+                if (visibleEvents.length === 0 && activeFilters.length > 0) return null;
+
+                return (
+                  <div key={era.id} className="mb-8" data-era-id={era.id}>
+                    <div className={`${era.color} ${era.textColor} p-6 rounded-xl shadow-lg mb-8`}>
+                      <h2 className="text-2xl font-bold text-center">{era.name}</h2>
+                    </div>
+
+                    <div className="relative pl-20 pb-8">
+                      <div className="absolute left-8 top-0 bottom-0 w-1 bg-slate-300"></div>
+
+                      <div className="space-y-8">
+                        {visibleEvents.map((event, idx) => (
+                          <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
+                            <div className={`absolute top-3 w-7 h-7 ${era.color} rounded-full border-4 border-white shadow-md`} style={{ left: '-33px' }}></div>
+                            
+                            <div className="absolute -left-40 top-2 text-xl font-bold text-slate-700 w-24 text-right">
+                              {event.year}
+                            </div>
+
+                            <div 
+                              onClick={() => setSelectedEvent(event)}
+                              className={`bg-white border-2 border-slate-300 rounded-xl p-5 cursor-pointer hover:shadow-xl hover:border-blue-500 transition-all hover:-translate-y-1 ${
+                                event.highlight ? 'bg-yellow-50 border-yellow-400 shadow-md' : 'shadow-md'
+                              }`}
+                            >
+                              <div className="flex justify-between items-start mb-2">
+                                <h3 className="font-bold text-xl text-slate-800 flex-1">
+                                  {event.title}
+                                </h3>
+                                {event.hasDetails && (
+                                  <span className="ml-4 text-xl text-blue-600">📖</span>
+                                )}
+                              </div>
+                              <p className="text-slate-600 mb-3 leading-relaxed">
+                                {event.description}
+                              </p>
+                              {event.topics.length > 0 && (
+                                <div className="flex gap-2 flex-wrap">
+                                  {event.topics.map(topic => (
+                                    <span key={topic} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                      {topic}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {selectedEvent && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 overflow-y-auto" onClick={() => setSelectedEvent(null)}>
+              <div className="bg-white rounded-xl p-8 max-w-4xl w-full shadow-2xl my-8" onClick={e => e.stopPropagation()}>
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <div className="text-blue-600 font-bold text-lg mb-2">{selectedEvent.year}</div>
+                    <h2 className="text-3xl font-bold text-slate-800">{selectedEvent.title}</h2>
+                  </div>
+                  <button onClick={() => setSelectedEvent(null)} className="text-slate-500 hover:text-slate-700 transition">
+                    <X size={28} />
+                  </button>
+                </div>
+                
+                {selectedEvent.detailedDescription ? (
+                  <div className="prose prose-slate max-w-none">
+                    {selectedEvent.detailedDescription.split('\n\n').map((paragraph, idx) => (
+                      <p key={idx} className="text-slate-700 text-base leading-relaxed mb-4">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-700 text-lg leading-relaxed mb-4">{selectedEvent.description}</p>
+                )}
+                
+                {selectedEvent.links && selectedEvent.links.length > 0 && (
+                  <div className="mt-6 pt-6 border-t border-slate-200">
+                    <h3 className="font-bold text-slate-800 mb-3">Learn More:</h3>
+                    <div className="space-y-2">
+                      {selectedEvent.links.map((link, idx) => (
+                        <a 
+                          key={idx}
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-blue-600 hover:text-blue-800 hover:underline"
+                        >
+                          → {link.title}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {selectedEvent.topics.length > 0 && (
+                  <div className="flex gap-2 flex-wrap mt-6 pt-6 border-t border-slate-200">
+                    {selectedEvent.topics.map(topic => (
+                      <span key={topic} className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<AITimeline />);
+  </script>
+</body>
+</html>
