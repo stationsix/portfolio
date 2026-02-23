@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Joe Neill — AI Coach &amp; Prompt Engineer</title>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -290,7 +291,8 @@
       flex-direction: column;
       gap: 12px;
     }
-    .project-icon { font-size: 2.2rem; line-height: 1; }
+    .project-icon { display: flex; }
+    .project-icon svg { width: 32px; height: 32px; stroke: #818cf8; stroke-width: 1.5; }
     .project-title {
       font-size: 1.1rem;
       font-weight: 700;
@@ -317,14 +319,15 @@
       color: #818cf8;
       font-weight: 500;
     }
-    .project-arrow {
-      color: var(--muted);
-      font-size: 1.1rem;
-      transition: transform 0.2s, color 0.2s;
+    .project-arrow { display: flex; }
+    .project-arrow svg {
+      width: 16px; height: 16px;
+      stroke: var(--muted);
+      transition: transform 0.2s, stroke 0.2s;
     }
-    .project-card:hover .project-arrow {
+    .project-card:hover .project-arrow svg {
       transform: translate(3px, -3px);
-      color: #818cf8;
+      stroke: #818cf8;
     }
     .project-card-soon {
       opacity: 0.45;
@@ -343,7 +346,8 @@
       align-items: center;
       gap: 14px;
     }
-    .skill-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .skill-icon { flex-shrink: 0; display: flex; }
+    .skill-icon svg { width: 22px; height: 22px; stroke: #818cf8; stroke-width: 1.5; }
     .skill-name {
       font-size: 0.9rem;
       font-weight: 600;
@@ -375,7 +379,8 @@
       font-size: 0.92rem;
     }
     .contact-link:hover { border-color: #6366f1; }
-    .contact-icon { font-size: 1.15rem; }
+    .contact-icon { display: flex; }
+    .contact-icon svg { width: 18px; height: 18px; stroke: #818cf8; stroke-width: 1.5; }
 
     /* ── Footer ── */
     footer {
@@ -488,7 +493,7 @@
       <div class="projects-grid">
 
         <a class="glass-card project-card" href="ai-history-timeline.html">
-          <div class="project-icon">🕰️</div>
+          <div class="project-icon"><i data-lucide="clock"></i></div>
           <div class="project-title">A Brief History of AI</div>
           <p class="project-desc">
             An interactive timeline tracing the key milestones in artificial intelligence —
@@ -496,12 +501,12 @@
           </p>
           <div class="project-footer">
             <span class="project-tag">Interactive Timeline</span>
-            <span class="project-arrow">↗</span>
+            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
           </div>
         </a>
 
         <a class="glass-card project-card" href="ai-memory-game%20v1.html">
-          <div class="project-icon">🧠</div>
+          <div class="project-icon"><i data-lucide="brain"></i></div>
           <div class="project-title">AI Memory Game</div>
           <p class="project-desc">
             A card-matching memory game featuring AI concepts, researchers, and breakthroughs.
@@ -509,12 +514,12 @@
           </p>
           <div class="project-footer">
             <span class="project-tag">Game</span>
-            <span class="project-arrow">↗</span>
+            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
           </div>
         </a>
 
         <div class="glass-card project-card project-card-soon">
-          <div class="project-icon">🔭</div>
+          <div class="project-icon"><i data-lucide="sparkles"></i></div>
           <div class="project-title">More Coming Soon</div>
           <p class="project-desc">
             Always building. Check back for new experiments in AI, prompting, and low-code tools.
@@ -538,42 +543,42 @@
       </p>
       <div class="skills-grid">
         <div class="glass-card skill-item">
-          <div class="skill-icon">🤖</div>
+          <div class="skill-icon"><i data-lucide="bot"></i></div>
           <div>
             <div class="skill-name">Prompt Engineering</div>
             <div class="skill-sub">Claude, ChatGPT, Gemini</div>
           </div>
         </div>
         <div class="glass-card skill-item">
-          <div class="skill-icon">⚡</div>
+          <div class="skill-icon"><i data-lucide="zap"></i></div>
           <div>
             <div class="skill-name">Vibe Coding</div>
             <div class="skill-sub">Cursor, Bolt, Claude Code</div>
           </div>
         </div>
         <div class="glass-card skill-item">
-          <div class="skill-icon">🔗</div>
+          <div class="skill-icon"><i data-lucide="workflow"></i></div>
           <div>
             <div class="skill-name">Workflow Automation</div>
             <div class="skill-sub">Zapier, Make, n8n</div>
           </div>
         </div>
         <div class="glass-card skill-item">
-          <div class="skill-icon">🎯</div>
+          <div class="skill-icon"><i data-lucide="target"></i></div>
           <div>
             <div class="skill-name">AI Coaching</div>
             <div class="skill-sub">Training teams to work with AI</div>
           </div>
         </div>
         <div class="glass-card skill-item">
-          <div class="skill-icon">🗣️</div>
+          <div class="skill-icon"><i data-lucide="message-circle"></i></div>
           <div>
             <div class="skill-name">Stakeholder Translation</div>
             <div class="skill-sub">Tech ↔ Business communication</div>
           </div>
         </div>
         <div class="glass-card skill-item">
-          <div class="skill-icon">🧩</div>
+          <div class="skill-icon"><i data-lucide="layers"></i></div>
           <div>
             <div class="skill-name">Low-Code / No-Code</div>
             <div class="skill-sub">Building without a dev team</div>
@@ -594,13 +599,13 @@
       </p>
       <div class="contact-links">
         <a href="mailto:stationsix@gmail.com" class="glass-card contact-link">
-          <span class="contact-icon">✉️</span> Email Me
+          <span class="contact-icon"><i data-lucide="mail"></i></span> Email Me
         </a>
         <a href="https://linkedin.com/in/joeneill" target="_blank" rel="noopener" class="glass-card contact-link">
-          <span class="contact-icon">💼</span> LinkedIn
+          <span class="contact-icon"><i data-lucide="linkedin"></i></span> LinkedIn
         </a>
         <a href="https://github.com/stationsix" target="_blank" rel="noopener" class="glass-card contact-link">
-          <span class="contact-icon">🐙</span> GitHub
+          <span class="contact-icon"><i data-lucide="github"></i></span> GitHub
         </a>
       </div>
     </section>
@@ -611,5 +616,6 @@
     &copy; 2025 Joe Neill &mdash; Built with AI
   </footer>
 
+  <script>lucide.createIcons();</script>
 </body>
 </html>
