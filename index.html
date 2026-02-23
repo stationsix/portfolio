@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Joe Neill — AI Coach &amp; Prompt Engineer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #08080f;
+      --surface: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-hover: rgba(99, 102, 241, 0.5);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background blobs ── */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.22;
+    }
+    .blob-1 {
+      width: 640px; height: 640px;
+      background: #6366f1;
+      top: -220px; left: -120px;
+      animation: float1 13s ease-in-out infinite;
+    }
+    .blob-2 {
+      width: 420px; height: 420px;
+      background: #a855f7;
+      top: 35%; right: -120px;
+      animation: float2 16s ease-in-out infinite;
+    }
+    .blob-3 {
+      width: 520px; height: 520px;
+      background: #2563eb;
+      bottom: -160px; left: 28%;
+      animation: float3 19s ease-in-out infinite;
+    }
+    @keyframes float1 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(45px,35px) scale(1.06); }
+    }
+    @keyframes float2 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(-30px,45px) scale(0.94); }
+    }
+    @keyframes float3 {
+      0%,100% { transform: translate(0,0) scale(1); }
+      50%      { transform: translate(25px,-35px) scale(1.09); }
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 16px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(8, 8, 15, 0.65);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      text-decoration: none;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #f8fafc; }
+
+    /* ── Layout ── */
+    main { position: relative; z-index: 1; }
+
+    section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 120px 24px;
+    }
+
+    .divider {
+      max-width: 1000px;
+      margin: 0 auto;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Glass card ── */
+    .glass-card {
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      transition: border-color 0.2s, transform 0.25s, box-shadow 0.25s;
+    }
+    .glass-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 14px 44px rgba(99, 102, 241, 0.15);
+    }
+
+    /* ── Section labels ── */
+    .section-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #818cf8;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: -0.5px;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .section-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 48px;
+    }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 100px;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--surface);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      width: fit-content;
+    }
+    .hero-eyebrow .dot {
+      width: 7px; height: 7px;
+      background: #4ade80;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: 0.6; transform: scale(0.85); }
+    }
+    .hero-name {
+      font-size: clamp(3rem, 9vw, 5.75rem);
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -2.5px;
+      color: #f8fafc;
+      margin-bottom: 14px;
+    }
+    .hero-title {
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      font-weight: 600;
+      background: linear-gradient(135deg, #6366f1, #a855f7, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: 44px;
+    }
+    .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: #fff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
+    .btn-secondary {
+      padding: 14px 28px;
+      background: var(--surface);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover { border-color: #6366f1; transform: translateY(-2px); }
+
+    /* ── About ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--muted);
+      line-height: 1.85;
+      margin-bottom: 18px;
+      font-size: 1rem;
+    }
+    .about-text p:last-child { margin-bottom: 0; }
+    .about-text strong { color: var(--text); }
+    .about-stats { display: flex; flex-direction: column; gap: 14px; }
+    .about-stat {
+      padding: 22px 26px;
+    }
+    .about-stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .about-stat-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Projects ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 22px;
+    }
+    .project-card {
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .project-icon { font-size: 2.2rem; line-height: 1; }
+    .project-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .project-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.65;
+      flex: 1;
+    }
+    .project-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+    .project-tag {
+      padding: 4px 10px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 999px;
+      font-size: 0.74rem;
+      color: #818cf8;
+      font-weight: 500;
+    }
+    .project-arrow {
+      color: var(--muted);
+      font-size: 1.1rem;
+      transition: transform 0.2s, color 0.2s;
+    }
+    .project-card:hover .project-arrow {
+      transform: translate(3px, -3px);
+      color: #818cf8;
+    }
+    .project-card-soon {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    /* ── Skills ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+    .skill-item {
+      padding: 20px 22px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .skill-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .skill-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+    .skill-sub {
+      font-size: 0.77rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    /* ── Contact ── */
+    #contact { text-align: center; }
+    #contact .section-sub { margin-left: auto; margin-right: auto; }
+    .contact-links {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.92rem;
+    }
+    .contact-link:hover { border-color: #6366f1; }
+    .contact-icon { font-size: 1.15rem; }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 32px 24px;
+      font-size: 0.78rem;
+      color: #475569;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 680px) {
+      nav { padding: 14px 20px; }
+      .nav-links { gap: 20px; }
+      section { padding: 80px 20px; }
+      .about-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <nav>
+    <a href="#hero" class="nav-logo">JN</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ── Hero ── -->
+    <section id="hero">
+      <div class="hero-eyebrow">
+        <span class="dot"></span> Available for new opportunities
+      </div>
+      <h1 class="hero-name">Joe Neill</h1>
+      <p class="hero-title">AI Coach &amp; Prompt Engineer</p>
+      <p class="hero-sub">
+        I bridge the gap between what AI can do and what businesses actually need —
+        translating cutting-edge technology into real results, without the jargon.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn-primary">See My Work</a>
+        <a href="#contact" class="btn-secondary">Get in Touch</a>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── About ── -->
+    <section id="about">
+      <p class="section-label">About Me</p>
+      <h2 class="section-title">The bridge between<br>tech and the rest of us</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            I'm not a traditional developer — and that's exactly the point.
+            I've built <strong>real, working tools</strong> using AI, prompting, and low-code platforms,
+            and I can show any business what's possible when you stop waiting for a dev team to catch up.
+          </p>
+          <p>
+            As an <strong>AI coach and prompt engineer</strong>, I help organizations move from
+            "we should probably look into AI" to actually using it — embedded in their workflows,
+            their products, and their thinking. I speak both languages: the technical one and the human one.
+          </p>
+          <p>
+            My sweet spot is sitting at the table with builders <em>and</em> decision-makers,
+            helping each side understand the other. I love getting into the weeds of how things work
+            so I can explain them clearly to the people who matter.
+          </p>
+        </div>
+        <div class="about-stats">
+          <div class="glass-card about-stat">
+            <div class="about-stat-value">AI-First</div>
+            <div class="about-stat-label">Building with prompts and low-code — not waiting for permission</div>
+          </div>
+          <div class="glass-card about-stat">
+            <div class="about-stat-value">Bridge</div>
+            <div class="about-stat-label">Fluent in both tech and business — a genuinely rare combination</div>
+          </div>
+          <div class="glass-card about-stat">
+            <div class="about-stat-value">Coach</div>
+            <div class="about-stat-label">Helping teams grasp what AI can actually do for them — today</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── Projects ── -->
+    <section id="projects">
+      <p class="section-label">Projects</p>
+      <h2 class="section-title">Built with AI,<br>from scratch</h2>
+      <p class="section-sub">
+        Every project here was designed and built using AI tools and prompting —
+        proof that "non-technical" doesn't mean non-capable.
+      </p>
+      <div class="projects-grid">
+
+        <a class="glass-card project-card" href="ai-history-timeline.html">
+          <div class="project-icon">🕰️</div>
+          <div class="project-title">A Brief History of AI</div>
+          <p class="project-desc">
+            An interactive timeline tracing the key milestones in artificial intelligence —
+            from Turing's foundational ideas to today's large language models.
+          </p>
+          <div class="project-footer">
+            <span class="project-tag">Interactive Timeline</span>
+            <span class="project-arrow">↗</span>
+          </div>
+        </a>
+
+        <a class="glass-card project-card" href="ai-memory-game%20v1.html">
+          <div class="project-icon">🧠</div>
+          <div class="project-title">AI Memory Game</div>
+          <p class="project-desc">
+            A card-matching memory game featuring AI concepts, researchers, and breakthroughs.
+            Learn the landscape while you play.
+          </p>
+          <div class="project-footer">
+            <span class="project-tag">Game</span>
+            <span class="project-arrow">↗</span>
+          </div>
+        </a>
+
+        <div class="glass-card project-card project-card-soon">
+          <div class="project-icon">🔭</div>
+          <div class="project-title">More Coming Soon</div>
+          <p class="project-desc">
+            Always building. Check back for new experiments in AI, prompting, and low-code tools.
+          </p>
+          <div class="project-footer">
+            <span class="project-tag">In Progress</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── Skills ── -->
+    <section id="skills">
+      <p class="section-label">Skills &amp; Tools</p>
+      <h2 class="section-title">What I bring to the table</h2>
+      <p class="section-sub">
+        A mix of AI fluency, communication craft, and hands-on building experience.
+      </p>
+      <div class="skills-grid">
+        <div class="glass-card skill-item">
+          <div class="skill-icon">🤖</div>
+          <div>
+            <div class="skill-name">Prompt Engineering</div>
+            <div class="skill-sub">Claude, ChatGPT, Gemini</div>
+          </div>
+        </div>
+        <div class="glass-card skill-item">
+          <div class="skill-icon">⚡</div>
+          <div>
+            <div class="skill-name">Vibe Coding</div>
+            <div class="skill-sub">Cursor, Bolt, Claude Code</div>
+          </div>
+        </div>
+        <div class="glass-card skill-item">
+          <div class="skill-icon">🔗</div>
+          <div>
+            <div class="skill-name">Workflow Automation</div>
+            <div class="skill-sub">Zapier, Make, n8n</div>
+          </div>
+        </div>
+        <div class="glass-card skill-item">
+          <div class="skill-icon">🎯</div>
+          <div>
+            <div class="skill-name">AI Coaching</div>
+            <div class="skill-sub">Training teams to work with AI</div>
+          </div>
+        </div>
+        <div class="glass-card skill-item">
+          <div class="skill-icon">🗣️</div>
+          <div>
+            <div class="skill-name">Stakeholder Translation</div>
+            <div class="skill-sub">Tech ↔ Business communication</div>
+          </div>
+        </div>
+        <div class="glass-card skill-item">
+          <div class="skill-icon">🧩</div>
+          <div>
+            <div class="skill-name">Low-Code / No-Code</div>
+            <div class="skill-sub">Building without a dev team</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ── Contact ── -->
+    <section id="contact">
+      <p class="section-label">Contact</p>
+      <h2 class="section-title">Let's talk</h2>
+      <p class="section-sub">
+        Whether you're looking to bring AI into your business, need a coach for your team,
+        or just want to geek out about what's possible — I'm easy to reach.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:stationsix@gmail.com" class="glass-card contact-link">
+          <span class="contact-icon">✉️</span> Email Me
+        </a>
+        <a href="https://linkedin.com/in/joeneill" target="_blank" rel="noopener" class="glass-card contact-link">
+          <span class="contact-icon">💼</span> LinkedIn
+        </a>
+        <a href="https://github.com/stationsix" target="_blank" rel="noopener" class="glass-card contact-link">
+          <span class="contact-icon">🐙</span> GitHub
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2025 Joe Neill &mdash; Built with AI
+  </footer>
+
+</body>
+</html>
