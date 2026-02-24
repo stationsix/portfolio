@@ -46,7 +46,30 @@
     };
 
     const techniques = [
-      // ── Output Structure ──────────────────────────────────────────────
+      // ── BEGINNER ──────────────────────────────────────────────────────
+      {
+        id: 2,
+        category: "Output Structure",
+        difficulty: "Beginner",
+        title: "Constrained Format Control",
+        description: "Explicitly specify length, structure, and tone. Vague instructions produce vague outputs — constraints are features, not limitations.",
+        example: `Summarize the following meeting notes.
+
+Constraints:
+- Maximum 5 bullet points
+- Each bullet under 20 words
+- Start each bullet with an action verb
+- Tone: professional, direct
+- Do not include pleasantries or filler phrases
+
+Meeting notes:
+"""
+{{PASTE_NOTES_HERE}}
+"""`,
+        tip: "The more specific your constraints, the more consistent your outputs across different runs.",
+      },
+
+      // ── INTERMEDIATE ──────────────────────────────────────────────────
       {
         id: 1,
         category: "Output Structure",
@@ -70,27 +93,6 @@ Text:
 {{PASTE_TEXT_HERE}}
 """`,
         tip: "Add \"no explanation, no markdown fences\" to prevent the model wrapping JSON in code blocks.",
-      },
-      {
-        id: 2,
-        category: "Output Structure",
-        difficulty: "Beginner",
-        title: "Constrained Format Control",
-        description: "Explicitly specify length, structure, and tone. Vague instructions produce vague outputs — constraints are features, not limitations.",
-        example: `Summarize the following meeting notes.
-
-Constraints:
-- Maximum 5 bullet points
-- Each bullet under 20 words
-- Start each bullet with an action verb
-- Tone: professional, direct
-- Do not include pleasantries or filler phrases
-
-Meeting notes:
-"""
-{{PASTE_NOTES_HERE}}
-"""`,
-        tip: "The more specific your constraints, the more consistent your outputs across different runs.",
       },
       {
         id: 3,
@@ -118,8 +120,6 @@ Proposal:
 """`,
         tip: "Use delimiter strings like ---SECTION--- so you can reliably parse sections programmatically.",
       },
-
-      // ── Prompt Architecture ───────────────────────────────────────────
       {
         id: 4,
         category: "Prompt Architecture",
@@ -141,6 +141,59 @@ Your rules:
 Your output format: Use headers for multi-part answers. Keep responses under 300 words unless the user asks for more.`,
         tip: "Invest time in the system prompt — it multiplies the quality of every message that follows.",
       },
+      {
+        id: 6,
+        category: "Prompt Architecture",
+        difficulty: "Intermediate",
+        title: "Persona + Constraint Stacking",
+        description: "Layer a specific role, goal, and hard constraints together. The persona shapes tone, the goal shapes focus, and the constraints prevent common failure modes.",
+        example: `You are a no-nonsense CFO who values precision over positivity.
+
+Your goal: Review the financial summary below and identify anything that should concern the board.
+
+Your constraints:
+- Do not soften bad news
+- Do not congratulate or use filler praise
+- If data is missing or unclear, say so explicitly rather than guessing
+- Prioritize items by potential financial impact, largest first
+
+Financial summary:
+"""
+{{PASTE_SUMMARY_HERE}}
+"""`,
+        tip: "Negative constraints (\"do not X\") are often more effective than positive ones for avoiding specific failure modes.",
+      },
+      {
+        id: 10,
+        category: "Workflow Patterns",
+        difficulty: "Intermediate",
+        title: "Task Chunking / Decomposition",
+        description: "Break a large, complex task into explicit sequential steps within one prompt. Each step builds on the last — reducing errors that come from asking the model to juggle too much at once.",
+        example: `Complete the following analysis in sequential steps. Finish each step fully before moving to the next.
+
+STEP 1 — UNDERSTAND:
+Restate the core problem in 2 sentences. What is actually being asked?
+
+STEP 2 — GATHER:
+List every relevant piece of information from the input below. Do not analyze yet.
+
+STEP 3 — ANALYZE:
+Using only what you listed in Step 2, identify the 3 most important patterns or issues.
+
+STEP 4 — RECOMMEND:
+Based only on Step 3, write 2–3 specific, actionable recommendations.
+
+STEP 5 — SUMMARIZE:
+Write a 3-sentence executive summary that a busy VP could read in 30 seconds.
+
+Input:
+"""
+{{PASTE_INPUT_HERE}}
+"""`,
+        tip: "The \"do not analyze yet\" instruction in Step 2 is critical — without it, models jump ahead and miss information.",
+      },
+
+      // ── ADVANCED ───────────────────────────────────────────────────────
       {
         id: 5,
         category: "Prompt Architecture",
@@ -169,30 +222,6 @@ Not allowed: Sending AI output without human review
 </examples>`,
         tip: "Claude and other models trained on XML respond especially well to this pattern.",
       },
-      {
-        id: 6,
-        category: "Prompt Architecture",
-        difficulty: "Intermediate",
-        title: "Persona + Constraint Stacking",
-        description: "Layer a specific role, goal, and hard constraints together. The persona shapes tone, the goal shapes focus, and the constraints prevent common failure modes.",
-        example: `You are a no-nonsense CFO who values precision over positivity.
-
-Your goal: Review the financial summary below and identify anything that should concern the board.
-
-Your constraints:
-- Do not soften bad news
-- Do not congratulate or use filler praise
-- If data is missing or unclear, say so explicitly rather than guessing
-- Prioritize items by potential financial impact, largest first
-
-Financial summary:
-"""
-{{PASTE_SUMMARY_HERE}}
-"""`,
-        tip: "Negative constraints (\"do not X\") are often more effective than positive ones for avoiding specific failure modes.",
-      },
-
-      // ── Advanced Reasoning ────────────────────────────────────────────
       {
         id: 7,
         category: "Advanced Reasoning",
@@ -277,37 +306,6 @@ Classification rules:
 
 Begin your response with the classification in brackets, e.g. [BILLING DISPUTE], then the response.`,
         tip: "Add a catch-all \"if none of the above\" case — without it, the model will force-fit ambiguous inputs into the nearest category.",
-      },
-
-      // ── Workflow Patterns ─────────────────────────────────────────────
-      {
-        id: 10,
-        category: "Workflow Patterns",
-        difficulty: "Intermediate",
-        title: "Task Chunking / Decomposition",
-        description: "Break a large, complex task into explicit sequential steps within one prompt. Each step builds on the last — reducing errors that come from asking the model to juggle too much at once.",
-        example: `Complete the following analysis in sequential steps. Finish each step fully before moving to the next.
-
-STEP 1 — UNDERSTAND:
-Restate the core problem in 2 sentences. What is actually being asked?
-
-STEP 2 — GATHER:
-List every relevant piece of information from the input below. Do not analyze yet.
-
-STEP 3 — ANALYZE:
-Using only what you listed in Step 2, identify the 3 most important patterns or issues.
-
-STEP 4 — RECOMMEND:
-Based only on Step 3, write 2–3 specific, actionable recommendations.
-
-STEP 5 — SUMMARIZE:
-Write a 3-sentence executive summary that a busy VP could read in 30 seconds.
-
-Input:
-"""
-{{PASTE_INPUT_HERE}}
-"""`,
-        tip: "The \"do not analyze yet\" instruction in Step 2 is critical — without it, models jump ahead and miss information.",
       },
       {
         id: 11,
