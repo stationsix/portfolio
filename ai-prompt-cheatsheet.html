@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Prompt Engineering Cheat Sheet — Joe Neill</title>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; background: #08080f; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+    .copy-btn { transition: all 0.15s; }
+    .copy-btn:active { transform: scale(0.95); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 3px; }
+    .filter-btn { transition: all 0.15s; }
+    .card-enter { animation: fadeUp 0.25s ease forwards; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useCallback } = React;
+
+    const CATEGORIES = ["All", "Output Structure", "Prompt Architecture", "Advanced Reasoning", "Workflow Patterns"];
+
+    const DIFFICULTY_COLOR = {
+      Beginner:     "bg-emerald-900/40 text-emerald-400 border-emerald-800/50",
+      Intermediate: "bg-amber-900/40 text-amber-400 border-amber-800/50",
+      Advanced:     "bg-rose-900/40 text-rose-400 border-rose-800/50",
+    };
+
+    const CAT_COLOR = {
+      "Output Structure":    "bg-blue-900/30 text-blue-400 border-blue-800/40",
+      "Prompt Architecture": "bg-purple-900/30 text-purple-400 border-purple-800/40",
+      "Advanced Reasoning":  "bg-orange-900/30 text-orange-400 border-orange-800/40",
+      "Workflow Patterns":   "bg-teal-900/30 text-teal-400 border-teal-800/40",
+    };
+
+    const techniques = [
+      // ── Output Structure ──────────────────────────────────────────────
+      {
+        id: 1,
+        category: "Output Structure",
+        difficulty: "Beginner",
+        title: "JSON Output Formatting",
+        description: "Force the model to return machine-readable JSON instead of prose. Essential when the output feeds another system, workflow, or API call.",
+        example: `You are a data extraction assistant.
+
+Extract the following fields from the text below and return ONLY valid JSON — no explanation, no markdown fences.
+
+Schema:
+{
+  "company": string,
+  "contact_name": string,
+  "action_items": string[],
+  "follow_up_date": string | null
+}
+
+Text:
+"""
+{{PASTE_TEXT_HERE}}
+"""`,
+        tip: "Add \"no explanation, no markdown fences\" to prevent the model wrapping JSON in code blocks.",
+      },
+      {
+        id: 2,
+        category: "Output Structure",
+        difficulty: "Beginner",
+        title: "Constrained Format Control",
+        description: "Explicitly specify length, structure, and tone. Vague instructions produce vague outputs — constraints are features, not limitations.",
+        example: `Summarize the following meeting notes.
+
+Constraints:
+- Maximum 5 bullet points
+- Each bullet under 20 words
+- Start each bullet with an action verb
+- Tone: professional, direct
+- Do not include pleasantries or filler phrases
+
+Meeting notes:
+"""
+{{PASTE_NOTES_HERE}}
+"""`,
+        tip: "The more specific your constraints, the more consistent your outputs across different runs.",
+      },
+      {
+        id: 3,
+        category: "Output Structure",
+        difficulty: "Intermediate",
+        title: "Structured Multi-Section Output",
+        description: "When you need several distinct outputs from one prompt, define labeled sections. This prevents the model from blending ideas together.",
+        example: `Analyze this business proposal and return your response in exactly these four sections. Use the section headers as written.
+
+---SUMMARY---
+One paragraph, plain language.
+
+---STRENGTHS---
+Numbered list, max 4 items.
+
+---RISKS---
+Numbered list, max 4 items. For each risk, include a one-line mitigation.
+
+---RECOMMENDATION---
+A single clear sentence beginning with either "Proceed," "Pause," or "Do not proceed."
+
+Proposal:
+"""
+{{PASTE_PROPOSAL_HERE}}
+"""`,
+        tip: "Use delimiter strings like ---SECTION--- so you can reliably parse sections programmatically.",
+      },
+
+      // ── Prompt Architecture ───────────────────────────────────────────
+      {
+        id: 4,
+        category: "Prompt Architecture",
+        difficulty: "Intermediate",
+        title: "System Prompt Design",
+        description: "The system prompt sets the model's persistent identity, rules, and output style before any user input. Think of it as the job description you never have to repeat.",
+        example: `[SYSTEM PROMPT — set once, applies to entire conversation]
+
+You are Alex, a senior business analyst at a management consulting firm.
+
+Your role: Help the user think through business problems with rigor and clarity.
+
+Your rules:
+- Always ask one clarifying question before giving recommendations
+- Flag assumptions explicitly using "Assumption:" before stating them
+- Never speculate about financial figures without saying "rough estimate"
+- Use plain language — avoid consulting jargon unless the user uses it first
+
+Your output format: Use headers for multi-part answers. Keep responses under 300 words unless the user asks for more.`,
+        tip: "Invest time in the system prompt — it multiplies the quality of every message that follows.",
+      },
+      {
+        id: 5,
+        category: "Prompt Architecture",
+        difficulty: "Intermediate",
+        title: "XML Tag Structuring",
+        description: "Use XML-style tags to separate context, task, constraints, and examples. This reduces ambiguity and helps the model know exactly what role each piece of content plays.",
+        example: `<context>
+You are helping a mid-size retail company write internal AI usage guidelines.
+The audience is non-technical staff. The company uses Microsoft 365 Copilot.
+</context>
+
+<task>
+Write a one-page policy covering appropriate use of AI tools for customer communications.
+</task>
+
+<constraints>
+- Plain language, 8th grade reading level
+- No legal jargon
+- Must include: what's allowed, what's not allowed, what to do if unsure
+- Tone: helpful and empowering, not fearful or restrictive
+</constraints>
+
+<examples>
+Allowed: Drafting first versions of routine customer emails
+Not allowed: Sending AI output without human review
+</examples>`,
+        tip: "Claude and other models trained on XML respond especially well to this pattern.",
+      },
+      {
+        id: 6,
+        category: "Prompt Architecture",
+        difficulty: "Intermediate",
+        title: "Persona + Constraint Stacking",
+        description: "Layer a specific role, goal, and hard constraints together. The persona shapes tone, the goal shapes focus, and the constraints prevent common failure modes.",
+        example: `You are a no-nonsense CFO who values precision over positivity.
+
+Your goal: Review the financial summary below and identify anything that should concern the board.
+
+Your constraints:
+- Do not soften bad news
+- Do not congratulate or use filler praise
+- If data is missing or unclear, say so explicitly rather than guessing
+- Prioritize items by potential financial impact, largest first
+
+Financial summary:
+"""
+{{PASTE_SUMMARY_HERE}}
+"""`,
+        tip: "Negative constraints (\"do not X\") are often more effective than positive ones for avoiding specific failure modes.",
+      },
+
+      // ── Advanced Reasoning ────────────────────────────────────────────
+      {
+        id: 7,
+        category: "Advanced Reasoning",
+        difficulty: "Intermediate",
+        title: "Scratchpad / Think-Aloud",
+        description: "Instruct the model to reason explicitly before answering. This dramatically improves accuracy on complex problems — the model catches its own mistakes mid-thought.",
+        example: `Before giving your final answer, reason through this problem step by step in a <thinking> block.
+
+In your thinking:
+- Identify any ambiguities in the question
+- Consider at least two different approaches
+- Note any assumptions you're making
+
+After the thinking block, give your final answer in a <answer> block. Keep the answer concise.
+
+Question: {{PASTE_QUESTION_HERE}}`,
+        tip: "The thinking block doesn't need to be shown to end users — you can strip it programmatically and only surface the answer.",
+      },
+      {
+        id: 8,
+        category: "Advanced Reasoning",
+        difficulty: "Advanced",
+        title: "Self-Critique Loop",
+        description: "Ask the model to generate a draft, critique it, then produce a revised version — all in one prompt. Mimics a professional edit cycle without requiring multiple messages.",
+        example: `Complete this task in three passes. Label each pass clearly.
+
+PASS 1 — DRAFT:
+Write a first draft of: {{TASK_DESCRIPTION}}
+
+PASS 2 — CRITIQUE:
+Review your draft above. Identify:
+- The weakest argument or section (be specific)
+- Any unsupported claims
+- Anything that could be misunderstood
+
+PASS 3 — REVISED:
+Rewrite the draft, addressing every issue you identified in Pass 2.
+Do not reference the critique in the final output — just fix it.`,
+        tip: "For high-stakes outputs (proposals, emails to executives), this pattern consistently outperforms a single-pass prompt.",
+      },
+      {
+        id: 9,
+        category: "Advanced Reasoning",
+        difficulty: "Advanced",
+        title: "Conditional Branching",
+        description: "Build decision logic directly into prompts. The model evaluates conditions and follows different paths — replacing simple if/else logic without code.",
+        example: `Read the customer message below and classify it, then respond according to the matching instructions.
+
+Customer message:
+"""
+{{PASTE_MESSAGE_HERE}}
+"""
+
+Classification rules:
+- If the message contains a billing dispute → Apologize, confirm you'll escalate to billing within 24 hours, do not discuss amounts
+- If the message is a feature request → Thank them, log the request in this format: "FEATURE REQUEST: [summary]", explain you've passed it to the product team
+- If the message expresses frustration or anger → Prioritize empathy, do not offer solutions until the second paragraph
+- If none of the above → Respond helpfully and ask a clarifying question
+
+Begin your response with the classification in brackets, e.g. [BILLING DISPUTE], then the response.`,
+        tip: "Add a catch-all \"if none of the above\" case — without it, the model will force-fit ambiguous inputs into the nearest category.",
+      },
+
+      // ── Workflow Patterns ─────────────────────────────────────────────
+      {
+        id: 10,
+        category: "Workflow Patterns",
+        difficulty: "Intermediate",
+        title: "Task Chunking / Decomposition",
+        description: "Break a large, complex task into explicit sequential steps within one prompt. Each step builds on the last — reducing errors that come from asking the model to juggle too much at once.",
+        example: `Complete the following analysis in sequential steps. Finish each step fully before moving to the next.
+
+STEP 1 — UNDERSTAND:
+Restate the core problem in 2 sentences. What is actually being asked?
+
+STEP 2 — GATHER:
+List every relevant piece of information from the input below. Do not analyze yet.
+
+STEP 3 — ANALYZE:
+Using only what you listed in Step 2, identify the 3 most important patterns or issues.
+
+STEP 4 — RECOMMEND:
+Based only on Step 3, write 2–3 specific, actionable recommendations.
+
+STEP 5 — SUMMARIZE:
+Write a 3-sentence executive summary that a busy VP could read in 30 seconds.
+
+Input:
+"""
+{{PASTE_INPUT_HERE}}
+"""`,
+        tip: "The \"do not analyze yet\" instruction in Step 2 is critical — without it, models jump ahead and miss information.",
+      },
+      {
+        id: 11,
+        category: "Workflow Patterns",
+        difficulty: "Advanced",
+        title: "Prompt Chaining",
+        description: "Design prompts where the output of one becomes the structured input for the next. Each prompt does one job well, instead of one prompt trying to do everything.",
+        example: `[PROMPT 1 — EXTRACT]
+Read the transcript below. Extract every decision made and every action item assigned.
+Return as JSON:
+{
+  "decisions": [{"decision": string, "made_by": string}],
+  "action_items": [{"task": string, "owner": string, "due": string | null}]
+}
+
+Transcript: """{{TRANSCRIPT}}"""
+
+---
+
+[PROMPT 2 — takes JSON output from Prompt 1 as input]
+You will receive a JSON object with decisions and action items from a meeting.
+Write a follow-up email to all attendees that:
+1. Confirms each decision (don't re-argue them)
+2. Lists action items as a numbered checklist with owners
+3. Ends with a single clear ask for confirmation by reply
+
+JSON input: """{{OUTPUT_FROM_PROMPT_1}}"""`,
+        tip: "Chaining with JSON handoffs between steps is far more reliable than trying to carry context through prose.",
+      },
+      {
+        id: 12,
+        category: "Workflow Patterns",
+        difficulty: "Advanced",
+        title: "Meta-Prompting",
+        description: "Use the model to write or improve prompts. Give it context about the task, the audience, and the failure modes you've seen — it will often catch things you missed.",
+        example: `You are an expert prompt engineer.
+
+I need a prompt that will:
+- Task: Extract competitor mentions from sales call transcripts
+- Output: A structured list with competitor name, context quote, and sentiment (positive / neutral / negative)
+- Audience: The prompt will be run by a non-technical sales ops team on new transcripts weekly
+- Known failure modes I've seen: The model sometimes includes our own company name as a "competitor," and sometimes the sentiment label doesn't match the context
+
+Write a production-ready prompt that handles these failure modes. Then explain in 2 sentences why you made the key design choices.`,
+        tip: "Describing your failure modes is the highest-leverage input you can give — it tells the model exactly where previous attempts broke.",
+      },
+      {
+        id: 13,
+        category: "Workflow Patterns",
+        difficulty: "Advanced",
+        title: "Iterative Refinement Pattern",
+        description: "Start with a broad generation, then apply a series of focused refinement prompts. Better than trying to specify everything upfront — you often don't know what you want until you see the first draft.",
+        example: `[PROMPT 1 — GENERATE]
+Write a first draft of a LinkedIn post announcing our new AI policy for customer service teams.
+Audience: Our 2,000 LinkedIn followers, mix of industry peers and potential clients.
+No length or format constraints yet — just write something genuine.
+
+---
+
+[PROMPT 2 — FOCUS]
+Here is a LinkedIn post draft: """{{DRAFT}}"""
+Rewrite it so the first sentence would make someone stop scrolling.
+Do not change the core message — only rewrite the opening.
+
+---
+
+[PROMPT 3 — CONSTRAIN]
+Here is the revised post: """{{REVISED_DRAFT}}"""
+Edit it to be under 150 words. Cut anything that doesn't add new information.
+Preserve the opening line exactly.`,
+        tip: "Each refinement prompt should change exactly one dimension — opening, length, tone, etc. Changing multiple things at once makes it hard to know what improved the output.",
+      },
+    ];
+
+    function CopyButton({ text }) {
+      const [copied, setCopied] = useState(false);
+
+      const handleCopy = useCallback(() => {
+        navigator.clipboard.writeText(text).then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        });
+      }, [text]);
+
+      return (
+        <button
+          onClick={handleCopy}
+          className={`copy-btn flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-all ${
+            copied
+              ? "bg-emerald-900/40 text-emerald-400 border-emerald-700/50"
+              : "bg-white/5 text-slate-400 border-white/10 hover:border-indigo-500/50 hover:text-indigo-300"
+          }`}
+        >
+          {copied ? (
+            <>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Copied
+            </>
+          ) : (
+            <>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              Copy prompt
+            </>
+          )}
+        </button>
+      );
+    }
+
+    function TechniqueCard({ t, index }) {
+      const [expanded, setExpanded] = useState(false);
+      return (
+        <div
+          className="card-enter rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md flex flex-col overflow-hidden hover:border-indigo-500/40 transition-all duration-200"
+          style={{ animationDelay: `${index * 40}ms` }}
+        >
+          {/* Header */}
+          <div className="p-5 flex flex-col gap-3">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="text-slate-100 font-bold text-base leading-snug">{t.title}</h3>
+              <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${CAT_COLOR[t.category]}`}>
+                  {t.category}
+                </span>
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${DIFFICULTY_COLOR[t.difficulty]}`}>
+                  {t.difficulty}
+                </span>
+              </div>
+            </div>
+            <p className="text-slate-400 text-sm leading-relaxed">{t.description}</p>
+          </div>
+
+          {/* Prompt example */}
+          <div className="mx-5 mb-4 rounded-xl border border-white/8 bg-black/30 overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/8 bg-white/3">
+              <span className="text-xs text-slate-500 font-mono font-medium">prompt</span>
+              <CopyButton text={t.example} />
+            </div>
+            <div className={`relative overflow-hidden transition-all duration-300 ${expanded ? "" : "max-h-36"}`}>
+              <pre className="p-4 text-xs text-slate-300 font-mono leading-relaxed">{t.example}</pre>
+              {!expanded && (
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+              )}
+            </div>
+            <button
+              onClick={() => setExpanded(!expanded)}
+              className="w-full py-2 text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
+            >
+              {expanded ? "Show less ↑" : "Show full prompt ↓"}
+            </button>
+          </div>
+
+          {/* Pro tip */}
+          <div className="mx-5 mb-5 flex gap-2.5 rounded-lg bg-indigo-950/40 border border-indigo-900/40 px-4 py-3">
+            <span className="text-indigo-400 text-xs font-bold flex-shrink-0 mt-0.5">TIP</span>
+            <p className="text-indigo-200/70 text-xs leading-relaxed">{t.tip}</p>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [activeCategory, setActiveCategory] = useState("All");
+      const [search, setSearch] = useState("");
+
+      const filtered = techniques.filter(t => {
+        const matchCat = activeCategory === "All" || t.category === activeCategory;
+        const q = search.toLowerCase();
+        const matchSearch = !q || t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.category.toLowerCase().includes(q);
+        return matchCat && matchSearch;
+      });
+
+      return (
+        <div className="min-h-screen text-slate-200" style={{ background: "#08080f" }}>
+
+          {/* Fixed blobs */}
+          <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+            <div className="absolute rounded-full opacity-20" style={{ width: 500, height: 500, background: "#6366f1", filter: "blur(80px)", top: -150, left: -100 }} />
+            <div className="absolute rounded-full opacity-15" style={{ width: 380, height: 380, background: "#a855f7", filter: "blur(80px)", top: "40%", right: -100 }} />
+          </div>
+
+          <div className="relative z-10">
+            {/* Header */}
+            <header className="border-b border-white/8 bg-black/30 backdrop-blur-xl sticky top-0 z-50">
+              <div className="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <a href="index.html" className="text-slate-500 hover:text-slate-300 transition-colors text-sm">← Portfolio</a>
+                    <span className="text-white/20">|</span>
+                    <span className="text-xs font-semibold tracking-widest uppercase text-indigo-400">Joe Neill</span>
+                  </div>
+                  <h1 className="text-xl font-bold text-white mt-0.5">Prompt Engineering Cheat Sheet</h1>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-500">{filtered.length} of {techniques.length} techniques</span>
+                  <input
+                    type="search"
+                    placeholder="Search techniques..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-300 placeholder-slate-600 focus:outline-none focus:border-indigo-500/50 w-44"
+                  />
+                </div>
+              </div>
+            </header>
+
+            {/* Category filters */}
+            <div className="max-w-5xl mx-auto px-5 pt-8 pb-2">
+              <div className="flex gap-2 flex-wrap">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`filter-btn px-4 py-2 rounded-full text-sm font-medium border ${
+                      activeCategory === cat
+                        ? "bg-indigo-600 border-indigo-500 text-white"
+                        : "bg-white/5 border-white/10 text-slate-400 hover:border-indigo-500/40 hover:text-slate-200"
+                    }`}
+                  >
+                    {cat}
+                    {cat !== "All" && (
+                      <span className="ml-2 text-xs opacity-60">
+                        {techniques.filter(t => t.category === cat).length}
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Grid */}
+            <main className="max-w-5xl mx-auto px-5 py-8">
+              {filtered.length === 0 ? (
+                <div className="text-center py-20 text-slate-500">No techniques match your search.</div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {filtered.map((t, i) => <TechniqueCard key={t.id} t={t} index={i} />)}
+                </div>
+              )}
+            </main>
+
+            {/* Footer */}
+            <footer className="border-t border-white/8 py-8 text-center">
+              <p className="text-slate-600 text-xs">
+                Built by <a href="index.html" className="text-indigo-400 hover:text-indigo-300">Joe Neill</a> &mdash; AI Coach &amp; Prompt Engineer &mdash; <a href="mailto:stationsix@gmail.com" className="text-indigo-400 hover:text-indigo-300">stationsix@gmail.com</a>
+              </p>
+            </footer>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
