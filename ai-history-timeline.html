@@ -170,8 +170,8 @@
         {
           id: 'symbolic',
           name: '1950s-1960s: Birth of AI and Early Optimism',
-          color: 'bg-blue-200',
-          textColor: 'text-slate-800',
+          color: 'bg-blue-600',
+          textColor: 'text-white',
           events: [
             { year: 1950, title: "Alan Turing's Imitation Game", description: "Turing proposed the Turing Test to evaluate a machine's ability to exhibit intelligent behavior indistinguishable from that of a human.", topics: ['Research Milestones'], hasDetails: true, detailedDescription: "In his seminal paper 'Computing Machinery and Intelligence,' Alan Turing proposed what became known as the Turing Test or 'Imitation Game.' Rather than asking 'Can machines think?'—a question he considered too vague—Turing reframed it operationally: Can a machine convince a human interrogator that it is human through text-based conversation?\n\nThe test involves a human evaluator conversing with both a machine and a human through text. If the evaluator cannot reliably distinguish which is which, the machine is said to demonstrate intelligent behavior. This elegant formulation sidestepped philosophical debates about consciousness and focused on observable behavior.\n\nTuring's work became foundational to AI, establishing the principle that intelligence could be evaluated through external behavior rather than internal processes. While the test has been criticized—machines can appear intelligent without understanding, and human-like conversation isn't the only form of intelligence—it remains influential in how we think about and evaluate AI systems today.", links: [{ title: "Original Paper: Computing Machinery and Intelligence", url: "https://academic.oup.com/mind/article/LIX/236/433/986238" }, { title: "Stanford Encyclopedia: The Turing Test", url: "https://plato.stanford.edu/entries/turing-test/" }] },
             { year: 1956, title: "Dartmouth Conference", description: "The term 'Artificial Intelligence' was coined by John McCarthy at this founding conference.", topics: ['Industry & Policy'], hasDetails: true, detailedDescription: "The Dartmouth Summer Research Project on Artificial Intelligence, held in 1956, is considered the founding event of AI as a field. Organized by John McCarthy, Marvin Minsky, Nathaniel Rochester, and Claude Shannon, it brought together researchers to explore the hypothesis that 'every aspect of learning or any other feature of intelligence can in principle be so precisely described that a machine can be made to simulate it.'\n\nMcCarthy coined the term 'Artificial Intelligence' for the proposal, deliberately choosing it over alternatives like 'complex information processing.' The name stuck and defined a field. The conference proposal ambitiously stated that significant progress could be made 'if a carefully selected group of scientists work on it together for a summer'—a timeline that proved wildly optimistic.\n\nWhile the conference didn't produce immediate breakthroughs, it established AI as a legitimate field of study, attracted funding, and brought together the pioneers who would shape the field for decades. The optimism of this era—believing human-level AI was just around the corner—would lead to both rapid early progress and eventually the first 'AI winter' when promises went unfulfilled.", links: [{ title: "Dartmouth Conference Proposal (1955)", url: "http://jmc.stanford.edu/articles/dartmouth/dartmouth.pdf" }, { title: "AI Magazine: The Dartmouth Conference", url: "https://aitopics.org/misc/brief-history" }] },
@@ -299,12 +299,12 @@
             {sidebarOpen ? <ChevronRight size={24} /> : <BookOpen size={24} />}
           </button>
 
-          <div className={`fixed top-0 right-0 h-full bg-slate-900/50 backdrop-blur-xl border-l border-white/10 shadow-2xl transition-transform duration-300 z-40 ${
+          <div className={`fixed top-0 right-0 h-full bg-slate-900/50 backdrop-blur-xl shadow-2xl transition-all duration-300 z-40 ${
             sidebarOpen ? 'translate-x-0' : 'translate-x-full'
-          }`} style={{ width: '400px' }}>
+          }`} style={{ width: '400px', borderLeft: `2px solid ${eras.find(e => e.id === visibleEra)?.color.replace('bg-', '').split('-')[0] === 'bg' ? 'currentColor' : 'inherit'}` }}>
             <div className="p-6 h-full overflow-y-auto">
               <div className="flex items-center gap-2 mb-4">
-                <BookOpen size={28} className="text-indigo-400" />
+                <BookOpen size={28} className={`${eras.find(e => e.id === visibleEra)?.color.replace('bg-', 'text-').replace('/50', '-400') || 'text-indigo-400'}`} />
                 <h2 className="text-2xl font-bold text-slate-100">Key Concepts</h2>
               </div>
               
@@ -314,13 +314,29 @@
                   <span><strong>Landmark</strong> — Major breakthrough moment</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-indigo-400">→</span>
+                  <span className={`${eras.find(e => e.id === visibleEra)?.color.replace('bg-', 'text-').replace('/50', '-400') || 'text-indigo-400'}`}>→</span>
                   <span>Click event cards for detailed info</span>
                 </div>
               </div>
               
-              <div className="mb-4 text-sm p-3 rounded-lg border border-indigo-800/50 bg-indigo-950/40">
-                <span className="font-bold text-indigo-300">{eras.find(e => e.id === visibleEra)?.name || 'current era'}</span>
+              <div className={`mb-4 text-sm p-3 rounded-lg transition-colors duration-300 ${
+                visibleEra === 'symbolic' ? 'border-blue-700/50 bg-blue-950/40' :
+                visibleEra === 'winter1' ? 'border-blue-900/50 bg-blue-950/40' :
+                visibleEra === 'ml' ? 'border-blue-700/50 bg-blue-950/40' :
+                visibleEra === 'bigdata' ? 'border-purple-700/50 bg-purple-950/40' :
+                visibleEra === 'deep' ? 'border-cyan-700/50 bg-cyan-950/40' :
+                visibleEra === 'multimodal' ? 'border-violet-700/50 bg-violet-950/40' :
+                'border-indigo-800/50 bg-indigo-950/40'
+              }`}>
+                <span className={`font-bold transition-colors duration-300 ${
+                  visibleEra === 'symbolic' ? 'text-blue-300' :
+                  visibleEra === 'winter1' ? 'text-blue-300' :
+                  visibleEra === 'ml' ? 'text-blue-300' :
+                  visibleEra === 'bigdata' ? 'text-purple-300' :
+                  visibleEra === 'deep' ? 'text-cyan-300' :
+                  visibleEra === 'multimodal' ? 'text-violet-300' :
+                  'text-indigo-300'
+                }`}>{eras.find(e => e.id === visibleEra)?.name || 'current era'}</span>
               </div>
               
               <div className="space-y-4" data-concepts-list>
