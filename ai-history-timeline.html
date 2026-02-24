@@ -251,12 +251,12 @@
                 <span className="text-white/20">|</span>
                 <span className="text-xs font-semibold tracking-widest uppercase text-indigo-400">Joe Neill</span>
               </div>
-              <h1 className="text-6xl font-black italic text-center mb-8 text-slate-100">
+              <h1 className="text-6xl font-black text-center mb-8 text-slate-100" style={{fontFamily: 'Georgia, serif', letterSpacing: '-0.02em'}}>
                 A BRIEF HISTORY OF AI
               </h1>
               
               <div className="flex items-center justify-center gap-2 flex-wrap mb-4">
-                <Filter size={20} className="text-slate-600" />
+                <Filter size={20} className="text-slate-400" />
                 {topics.map(topic => (
                   <button
                     key={topic}
@@ -280,7 +280,7 @@
                 )}
               </div>
               {activeFilters.length > 0 && (
-                <div className="text-center text-sm text-slate-600">
+                <div className="text-center text-sm text-slate-400">
                   Filtering by: {activeFilters.join(', ')}
                 </div>
               )}
@@ -308,25 +308,25 @@
                           <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
                             <div className={`absolute top-3 w-7 h-7 ${era.color} rounded-full border-4 border-white shadow-md`} style={{ left: '-33px' }}></div>
                             
-                            <div className="absolute -left-40 top-2 text-xl font-bold text-slate-700 w-24 text-right">
+                            <div className="absolute -left-40 top-2 text-xl font-bold text-slate-300 w-24 text-right">
                               {event.year}
                             </div>
 
                             <div 
                               onClick={() => setSelectedEvent(event)}
-                              className={`bg-white border-2 border-slate-300 rounded-xl p-5 cursor-pointer hover:shadow-xl hover:border-blue-500 transition-all hover:-translate-y-1 ${
-                                event.highlight ? 'bg-yellow-50 border-yellow-400 shadow-md' : 'shadow-md'
+                              className={`bg-slate-800/40 border-2 border-slate-700/50 rounded-xl p-5 cursor-pointer hover:shadow-xl hover:border-indigo-500/50 transition-all hover:-translate-y-1 backdrop-blur-sm ${
+                                event.highlight ? 'bg-indigo-950/50 border-indigo-500/50 shadow-md' : 'shadow-md'
                               }`}
                             >
                               <div className="flex justify-between items-start mb-2">
-                                <h3 className="font-bold text-xl text-slate-800 flex-1">
+                                <h3 className="font-bold text-xl text-slate-100 flex-1">
                                   {event.title}
                                 </h3>
                                 {event.hasDetails && (
-                                  <span className="ml-4 text-xl text-blue-600">📖</span>
+                                  <span className="ml-4 text-xl text-indigo-400">📖</span>
                                 )}
                               </div>
-                              <p className="text-slate-600 mb-3 leading-relaxed">
+                              <p className="text-slate-300 mb-3 leading-relaxed">
                                 {event.description}
                               </p>
                               {event.topics.length > 0 && (
@@ -406,9 +406,14 @@
             </div>
           )}          
           <footer className="border-t border-white/8 py-8 text-center mt-16">
-            <p className="text-slate-600 text-xs">
-              Built by <a href="index.html" className="text-indigo-400 hover:text-indigo-300">Joe Neill</a> &mdash; AI Coach &amp; Prompt Engineer &mdash; <a href="mailto:stationsix@gmail.com" className="text-indigo-400 hover:text-indigo-300">stationsix@gmail.com</a>
-            </p>
+            <div className="flex items-center justify-center gap-3">
+              <p className="text-slate-600 text-xs">
+                Built by <a href="index.html" className="text-indigo-400 hover:text-indigo-300">Joe Neill</a> &mdash; AI Coach &amp; Prompt Engineer
+              </p>
+              <a href="https://linkedin.com/in/joe-neill" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-indigo-400 transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+              </a>
+            </div>
           </footer>        </div>
       );
     };
