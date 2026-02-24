@@ -443,10 +443,10 @@
                         }`}>{era.name}</h2>
                       </div>
 
-                      <div className="space-y-8">
+                      <div className="space-y-8 relative">
                         {visibleEvents.map((event, idx) => (
-                          <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
-                            <div className={`absolute top-3 w-5 h-5 rounded-full shadow-lg border-2 border-slate-900 z-20 ${
+                          <div key={`dot-${idx}`} className="absolute w-5 h-5 -translate-x-1/2" style={{ left: '32px', top: `${idx * 256 + 12}px` }}>
+                            <div className={`w-5 h-5 rounded-full shadow-lg border-2 border-slate-900 z-20 ${
                               era.id === 'symbolic' ? 'bg-indigo-500' :
                               era.id === 'winter1' ? 'bg-emerald-500' :
                               era.id === 'ml' ? 'bg-teal-500' :
@@ -454,8 +454,11 @@
                               era.id === 'deep' ? 'bg-cyan-500' :
                               era.id === 'multimodal' ? 'bg-violet-500' :
                               'bg-indigo-500'
-                            }`} style={{ left: '-46px' }}></div>
-                            
+                            }`}></div>
+                          </div>
+                        ))}
+                        {visibleEvents.map((event, idx) => (
+                          <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
                             <div className="absolute -left-40 top-2 text-xl font-bold text-slate-300 w-24 text-right">
                               {event.year}
                             </div>
