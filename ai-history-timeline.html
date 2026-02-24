@@ -446,7 +446,15 @@
                       <div className="space-y-8">
                         {visibleEvents.map((event, idx) => (
                           <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
-                            <div className={`absolute top-4 w-1.5 h-1.5 ${era.color} rounded-full shadow-md`} style={{ left: '-37px' }}></div>
+                            <div className={`absolute top-3 w-5 h-5 rounded-full shadow-lg border-2 border-slate-900 ${
+                              era.id === 'symbolic' ? 'bg-indigo-500' :
+                              era.id === 'winter1' ? 'bg-emerald-500' :
+                              era.id === 'ml' ? 'bg-teal-500' :
+                              era.id === 'bigdata' ? 'bg-purple-500' :
+                              era.id === 'deep' ? 'bg-cyan-500' :
+                              era.id === 'multimodal' ? 'bg-violet-500' :
+                              'bg-indigo-500'
+                            }`} style={{ left: '-42px' }}></div>
                             
                             <div className="absolute -left-40 top-2 text-xl font-bold text-slate-300 w-24 text-right">
                               {event.year}
