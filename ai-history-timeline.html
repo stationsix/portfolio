@@ -270,7 +270,7 @@
           'Language & Text': 'bg-indigo-950/40 text-indigo-300 border-indigo-800/50',
           'Vision & Media': 'bg-cyan-950/40 text-cyan-300 border-cyan-800/50',
           'Neural Networks': 'bg-pink-950/40 text-pink-300 border-pink-800/50',
-          'Generative AI': 'bg-amber-950/40 text-amber-300 border-amber-800/50'
+          'Generative AI': 'bg-fuchsia-950/40 text-fuchsia-300 border-fuchsia-800/50'
         };
         return topicColorMap[topic] || 'bg-slate-800/40 text-slate-300 border-slate-700/50';
       };
@@ -293,6 +293,16 @@
         multimodal: 'rgba(139,92,246,0.4)',
       }[eraId] || 'rgba(99,102,241,0.4)');
 
+      const stylizePeriod = (period) =>
+        period.split(/(\d+s)/).map((part, i) =>
+          /^\d+s$/.test(part) ? (
+            <React.Fragment key={i}>
+              {part.slice(0, -1)}
+              <span style={{ fontSize: '0.6em', letterSpacing: '0.05em' }}>s</span>
+            </React.Fragment>
+          ) : part
+        );
+
       const getEraPillStyle = (eraId, isLandmark) => {
         const config = ({
           symbolic:  { border: 'rgba(99,102,241,0.75)',  color: '#a5b4fc', glow: 'rgba(99,102,241,0.35)' },
@@ -310,6 +320,13 @@
         };
       };
 
+      const selectedEventEra = selectedEvent
+        ? eras.find(era => era.events.includes(selectedEvent))
+        : null;
+      const selectedEventEraColor = selectedEventEra
+        ? getEraPillStyle(selectedEventEra.id, false).color
+        : '#a5b4fc';
+
       return (
         <div className="min-h-screen text-slate-200 relative" style={{ background: '#08080f' }}>
           <div className="bg-blobs">
@@ -326,60 +343,64 @@
             {sidebarOpen ? <ChevronRight size={24} /> : <BookOpen size={24} />}
           </button>
 
-          <div className={`fixed top-0 right-0 h-full bg-slate-900/50 backdrop-blur-xl shadow-2xl transition-all duration-300 z-40 ${
+          <div className={`fixed top-0 right-0 h-full bg-slate-900/60 backdrop-blur-xl shadow-2xl z-40 ${
             sidebarOpen ? 'translate-x-0' : 'translate-x-full'
-          }`} style={{ width: '400px', borderLeft: `2px solid ${eras.find(e => e.id === visibleEra)?.color.replace('bg-', '').split('-')[0] === 'bg' ? 'currentColor' : 'inherit'}` }}>
+          }`} style={{
+            width: '400px',
+            borderLeft: `2px solid ${getEraPillStyle(visibleEra, false).borderColor}`,
+            boxShadow: `-4px 0 32px -4px ${getEraLineColor(visibleEra)}`,
+            transition: 'transform 0.3s, border-color 0.4s, box-shadow 0.4s',
+          }}>
             <div className="p-6 h-full overflow-y-auto">
-              <div className="flex items-center gap-2 mb-4">
-                <BookOpen size={28} className={`${eras.find(e => e.id === visibleEra)?.color.replace('bg-', 'text-').replace('/50', '-400') || 'text-indigo-400'}`} />
-                <h2 className="text-2xl font-bold text-slate-100">Key Concepts</h2>
+              <div className="flex items-center gap-2 mb-5">
+                <BookOpen size={22} style={{ color: getEraPillStyle(visibleEra, false).color, transition: 'color 0.4s' }} />
+                <h2 className="text-xl font-bold text-slate-100">Key Concepts</h2>
               </div>
-              
-              <div className="mb-4 p-3 rounded-lg border border-slate-700/50 bg-slate-800/30 text-xs text-slate-400 space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-400 text-sm">⚜️</span>
-                  <span><strong>Landmark</strong> — Major breakthrough moment</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`${eras.find(e => e.id === visibleEra)?.color.replace('bg-', 'text-').replace('/50', '-400') || 'text-indigo-400'}`}>→</span>
-                  <span>Click event cards for detailed info</span>
-                </div>
-              </div>
-              
-              <div className={`mb-4 text-sm p-3 rounded-lg transition-colors duration-300 ${
-                visibleEra === 'symbolic' ? 'border-indigo-700/50 bg-indigo-950/40' :
-                visibleEra === 'winter1' ? 'border-emerald-700/50 bg-emerald-950/40' :
-                visibleEra === 'ml' ? 'border-teal-700/50 bg-teal-950/40' :
-                visibleEra === 'bigdata' ? 'border-purple-700/50 bg-purple-950/40' :
-                visibleEra === 'deep' ? 'border-cyan-700/50 bg-cyan-950/40' :
-                visibleEra === 'multimodal' ? 'border-violet-700/50 bg-violet-950/40' :
-                'border-indigo-800/50 bg-indigo-950/40'
-              }`}>
-                <span className={`font-bold transition-colors duration-300 ${
-                  visibleEra === 'symbolic' ? 'text-indigo-300' :
-                  visibleEra === 'winter1' ? 'text-emerald-300' :
-                  visibleEra === 'ml' ? 'text-teal-300' :
-                  visibleEra === 'bigdata' ? 'text-purple-300' :
-                  visibleEra === 'deep' ? 'text-cyan-300' :
-                  visibleEra === 'multimodal' ? 'text-violet-300' :
-                  'text-indigo-300'
-                }`}>{eras.find(e => e.id === visibleEra)?.name || 'current era'}</span>
-              </div>
-              
+
+              {(() => {
+                const currentEra = eras.find(e => e.id === visibleEra);
+                const rawName = currentEra?.name || 'Current Era';
+                const [period, description] = rawName.split(': ');
+                const pillStyle = getEraPillStyle(visibleEra, false);
+                return (
+                  <div
+                    className="mb-6 py-3 rounded-r"
+                    style={{
+                      paddingLeft: '14px',
+                      borderLeft: `3px solid ${pillStyle.borderColor}`,
+                      background: '#08080f',
+                      boxShadow: `0 0 28px 0 ${getEraLineColor(visibleEra)}`,
+                      transition: 'border-color 0.4s, box-shadow 0.4s',
+                    }}
+                  >
+                    <div className="text-xs font-bold tracking-widest uppercase mb-1" style={{ color: pillStyle.color, transition: 'color 0.4s' }}>
+                      {stylizePeriod(period)}
+                    </div>
+                    <div className="text-sm font-semibold text-slate-200">{description || period}</div>
+                  </div>
+                );
+              })()}
+
               <div className="space-y-4" data-concepts-list>
                 {relevantConcepts.map((concept, idx) => {
                   const isRelatedToHovered = hoveredEvent && hoveredEvent.topics.some(t => concept.eras && concept.eras.length > 0);
                   const shouldDim = hoveredEvent && !isRelatedToHovered;
-                  
+                  const pillStyle = getEraPillStyle(visibleEra, false);
+
                   return (
-                    <div 
-                      key={idx} 
-                      className={`border-l-4 border-indigo-500 pl-4 py-2 rounded-r transition-all ${
-                        shouldDim ? 'opacity-40 bg-white/5' : 'opacity-100 bg-white/5 hover:bg-indigo-950/30'
-                      } ${isRelatedToHovered ? 'border-indigo-400 shadow-md shadow-indigo-500/20' : ''}`}
+                    <div
+                      key={idx}
+                      className={`pl-4 py-2 rounded-r transition-all duration-200 ${
+                        shouldDim ? 'opacity-25' : 'opacity-100 bg-white/[0.03] hover:bg-white/[0.06]'
+                      }`}
+                      style={{
+                        borderLeft: `3px solid ${shouldDim ? 'rgba(100,116,139,0.25)' : pillStyle.borderColor}`,
+                        boxShadow: shouldDim ? 'none' : `0 0 18px -6px ${getEraLineColor(visibleEra)}`,
+                        transition: 'border-color 0.4s, box-shadow 0.4s, opacity 0.2s',
+                      }}
                     >
-                      <h3 className={`font-bold text-lg mb-2 ${shouldDim ? 'text-slate-500' : 'text-slate-100'}`}>{concept.title}</h3>
-                      <p className={`text-sm mb-2 leading-relaxed ${shouldDim ? 'text-slate-600' : 'text-slate-400'}`}>{concept.definition}</p>
+                      <h3 className={`font-bold text-base mb-1 ${shouldDim ? 'text-slate-600' : 'text-slate-100'}`}>{concept.title}</h3>
+                      <p className={`text-sm mb-2 leading-relaxed ${shouldDim ? 'text-slate-700' : 'text-slate-400'}`}>{concept.definition}</p>
                       {concept.examples.length > 0 && (
                         <div className={`text-xs ${shouldDim ? 'text-slate-700' : 'text-slate-500'}`}>
                           <span className="font-semibold">Examples:</span> {concept.examples.join(', ')}
@@ -401,7 +422,14 @@
                 <span className="text-white/20">|</span>
                 <span className="text-xs font-semibold tracking-widest uppercase text-indigo-400">Joe Neill</span>
               </div>
-              <h1 className="text-6xl font-black text-center mb-8 text-slate-100" style={{fontFamily: 'Georgia, serif', letterSpacing: '-0.02em'}}>
+              <h1 className="text-6xl font-black text-center mb-8" style={{
+                fontFamily: 'Georgia, serif',
+                letterSpacing: '-0.02em',
+                background: 'linear-gradient(135deg, #a5b4fc 0%, #c4b5fd 50%, #67e8f9 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>
                 A BRIEF HISTORY OF AI
               </h1>
               
@@ -429,11 +457,23 @@
                   </button>
                 )}
               </div>
-              {activeFilters.length > 0 && (
-                <div className="text-center text-sm text-slate-400">
-                  Filtering by: {activeFilters.join(', ')}
+              <div className="flex items-center justify-center gap-5 mt-3 text-xs text-slate-500">
+                <div className="flex items-center gap-1.5">
+                  <Signpost size={13} className="text-amber-400/80" />
+                  <span>Landmark event</span>
                 </div>
-              )}
+                <span className="text-slate-700">·</span>
+                <div className="flex items-center gap-1.5">
+                  <ChevronRight size={13} className="text-slate-600" />
+                  <span>Click any card for full history</span>
+                </div>
+                {activeFilters.length > 0 && (
+                  <>
+                    <span className="text-slate-700">·</span>
+                    <span className="text-slate-400">Filtering: {activeFilters.join(', ')}</span>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="max-w-5xl mx-auto px-4">
@@ -444,29 +484,32 @@
 
                 if (visibleEvents.length === 0 && activeFilters.length > 0) return null;
 
+                const [eraPeriod, eraDescription] = era.name.split(': ');
+
                 return (
                   <div key={era.id} className="mb-8" data-era-id={era.id}>
                     <div className="relative pl-40 pb-8">
                       <div className="absolute top-0 bottom-0 w-px" style={{ left: '100px', background: getEraLineColor(era.id) }}></div>
 
-                      <div className={`text-base p-5 rounded-lg mb-10 relative z-10 transition-colors duration-300 ${
-                        era.id === 'symbolic' ? 'border-indigo-700/50 bg-indigo-950/40' :
-                          era.id === 'winter1' ? 'border-emerald-700/50 bg-emerald-950/40' :
-                        era.id === 'ml' ? 'border-teal-700/50 bg-teal-950/40' :
-                        era.id === 'bigdata' ? 'border-purple-700/50 bg-purple-950/40' :
-                        era.id === 'deep' ? 'border-cyan-700/50 bg-cyan-950/40' :
-                        era.id === 'multimodal' ? 'border-violet-700/50 bg-violet-950/40' :
-                        'border-indigo-800/50 bg-indigo-950/40'
-                      }`}>
-                        <h2 className={`font-bold transition-colors duration-300 ${
-                          era.id === 'symbolic' ? 'text-indigo-300' :
-                          era.id === 'winter1' ? 'text-emerald-300' :
-                          era.id === 'ml' ? 'text-teal-300' :
-                          era.id === 'bigdata' ? 'text-purple-300' :
-                          era.id === 'deep' ? 'text-cyan-300' :
-                          era.id === 'multimodal' ? 'text-violet-300' :
-                          'text-indigo-300'
-                        }`}>{era.name}</h2>
+                      <div
+                        className="relative mb-10 z-10 py-4 transition-colors duration-300"
+                        style={{
+                          marginLeft: '-60px',
+                          paddingLeft: '57px',
+                          borderLeft: `3px solid ${getEraPillStyle(era.id, false).borderColor}`,
+                          background: '#08080f',
+                        }}
+                      >
+                        <div className={`text-xs font-bold tracking-widest uppercase mb-1 transition-colors duration-300 ${
+                          era.id === 'symbolic' ? 'text-indigo-400' :
+                          era.id === 'winter1' ? 'text-emerald-400' :
+                          era.id === 'ml' ? 'text-teal-400' :
+                          era.id === 'bigdata' ? 'text-purple-400' :
+                          era.id === 'deep' ? 'text-cyan-400' :
+                          era.id === 'multimodal' ? 'text-violet-400' :
+                          'text-indigo-400'
+                        }`}>{stylizePeriod(eraPeriod)}</div>
+                        <h2 className="font-bold text-xl text-slate-100">{eraDescription}</h2>
                       </div>
 
                       <div className="space-y-8">
@@ -532,7 +575,7 @@
               <div className="bg-slate-900/80 border border-slate-700/50 rounded-xl p-8 max-w-4xl w-full shadow-2xl my-8 backdrop-blur-xl" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <div className="text-indigo-400 font-bold text-lg mb-2">{selectedEvent.year}</div>
+                    <div className="font-bold text-lg mb-2" style={{ color: selectedEventEraColor }}>{selectedEvent.year}</div>
                     <h2 className="text-3xl font-bold text-slate-100">{selectedEvent.title}</h2>
                   </div>
                   <button onClick={() => setSelectedEvent(null)} className="text-slate-400 hover:text-slate-200 transition">
@@ -562,7 +605,8 @@
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="block text-indigo-400 hover:text-indigo-300 hover:underline transition"
+                          className="block hover:underline transition"
+                          style={{ color: selectedEventEraColor }}
                         >
                           → {link.title}
                         </a>
