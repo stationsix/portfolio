@@ -419,10 +419,10 @@
 
                 return (
                   <div key={era.id} className="mb-8" data-era-id={era.id}>
-                    <div className="relative pl-20 pb-8">
-                      <div className="absolute left-8 top-0 bottom-0 w-1 bg-slate-300"></div>
+                    <div className="relative pl-20 pb-8 -mt-8">
+                      <div className="absolute left-8 -top-8 bottom-0 w-1 bg-slate-300"></div>
 
-                      <div className={`${era.color} ${era.textColor} p-6 rounded-xl shadow-lg mb-8`}>
+                      <div className={`${era.color} ${era.textColor} p-6 rounded-xl shadow-lg mb-8 relative z-10`}>
                         <h2 className="text-2xl font-bold text-center">{era.name}</h2>
                       </div>
 
