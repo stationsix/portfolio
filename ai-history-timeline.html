@@ -284,6 +284,32 @@
         return isFiltered ? 'opacity-30' : 'opacity-100';
       };
 
+      const getEraLineColor = (eraId) => ({
+        symbolic: 'rgba(99,102,241,0.4)',
+        winter1: 'rgba(16,185,129,0.4)',
+        ml: 'rgba(20,184,166,0.4)',
+        bigdata: 'rgba(168,85,247,0.4)',
+        deep: 'rgba(6,182,212,0.4)',
+        multimodal: 'rgba(139,92,246,0.4)',
+      }[eraId] || 'rgba(99,102,241,0.4)');
+
+      const getEraPillStyle = (eraId, isLandmark) => {
+        const config = ({
+          symbolic:  { border: 'rgba(99,102,241,0.75)',  color: '#a5b4fc', glow: 'rgba(99,102,241,0.35)' },
+          winter1:   { border: 'rgba(16,185,129,0.75)',  color: '#6ee7b7', glow: 'rgba(16,185,129,0.35)' },
+          ml:        { border: 'rgba(20,184,166,0.75)',  color: '#5eead4', glow: 'rgba(20,184,166,0.35)' },
+          bigdata:   { border: 'rgba(168,85,247,0.75)', color: '#d8b4fe', glow: 'rgba(168,85,247,0.35)' },
+          deep:      { border: 'rgba(6,182,212,0.75)',   color: '#67e8f9', glow: 'rgba(6,182,212,0.35)' },
+          multimodal:{ border: 'rgba(139,92,246,0.75)', color: '#c4b5fd', glow: 'rgba(139,92,246,0.35)' },
+        }[eraId]) || { border: 'rgba(99,102,241,0.75)', color: '#a5b4fc', glow: 'rgba(99,102,241,0.35)' };
+        return {
+          background: '#08080f',
+          borderColor: config.border,
+          color: config.color,
+          boxShadow: isLandmark ? `0 0 12px 2px ${config.glow}` : 'none',
+        };
+      };
+
       return (
         <div className="min-h-screen text-slate-200 relative" style={{ background: '#08080f' }}>
           <div className="bg-blobs">
@@ -420,8 +446,8 @@
 
                 return (
                   <div key={era.id} className="mb-8" data-era-id={era.id}>
-                    <div className="relative pl-32 pb-8 -mt-8">
-                      <div className="absolute left-24 -top-8 bottom-0 w-1 bg-slate-300"></div>
+                    <div className="relative pl-40 pb-8">
+                      <div className="absolute top-0 bottom-0 w-px" style={{ left: '100px', background: getEraLineColor(era.id) }}></div>
 
                       <div className={`text-base p-5 rounded-lg mb-10 relative z-10 transition-colors duration-300 ${
                         era.id === 'symbolic' ? 'border-indigo-700/50 bg-indigo-950/40' :
@@ -446,18 +472,16 @@
                       <div className="space-y-8">
                         {visibleEvents.map((event, idx) => (
                           <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
-                            <div className="absolute top-2 text-xl font-bold text-slate-300 w-24 text-right flex items-center justify-end gap-2" style={{ left: '-115px' }}>
-                              <div>{event.year}</div>
-                              <div className={`w-5 h-5 rounded-full shadow-lg border-2 border-slate-900 flex-shrink-0 ${
-                                era.id === 'symbolic' ? 'bg-indigo-500' :
-                                era.id === 'winter1' ? 'bg-emerald-500' :
-                                era.id === 'ml' ? 'bg-teal-500' :
-                                era.id === 'bigdata' ? 'bg-purple-500' :
-                                era.id === 'deep' ? 'bg-cyan-500' :
-                                era.id === 'multimodal' ? 'bg-violet-500' :
-                                'bg-indigo-500'
-                              }`}></div>
+                            <div
+                              className="absolute flex items-center justify-center rounded-full text-xs font-bold tracking-wider z-10 border select-none"
+                              style={{ left: '-96px', top: '14px', width: '72px', height: '26px', ...getEraPillStyle(era.id, isLandmarkEvent(event)) }}
+                            >
+                              {event.year}
                             </div>
+                            <div
+                              className="absolute h-px"
+                              style={{ left: '-24px', width: '24px', top: '27px', background: getEraLineColor(era.id) }}
+                            ></div>
 
                             <div 
                               onClick={() => setSelectedEvent(event)}
