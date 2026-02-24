@@ -446,7 +446,7 @@
                       <div className="space-y-8">
                         {visibleEvents.map((event, idx) => (
                           <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
-                            <div className="absolute -left-40 top-2 text-xl font-bold text-slate-300 w-24 text-right flex items-center justify-end gap-2">
+                            <div className="absolute top-2 text-xl font-bold text-slate-300 w-24 text-right flex items-center justify-end gap-2" style={{ left: '-134px' }}>
                               <div>{event.year}</div>
                               <div className={`w-5 h-5 rounded-full shadow-lg border-2 border-slate-900 flex-shrink-0 ${
                                 era.id === 'symbolic' ? 'bg-indigo-500' :
