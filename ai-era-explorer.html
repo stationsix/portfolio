@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Era Journey - Interactive Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            background-color: #08080f;
+            overflow-x: hidden;
+        }
+        
+        .parallax-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+        }
+
+        .era-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .era-card-base {
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .era-card-collapsed {
+            width: 90%;
+            max-width: 500px;
+            padding: 3rem 2rem;
+            cursor: pointer;
+        }
+
+        .era-card-collapsed:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .era-card-expanded {
+            width: 95%;
+            max-width: 1200px;
+            padding: 3rem;
+        }
+
+        .era-title {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .era-subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1.5rem;
+        }
+
+        .event-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .event-item {
+            margin-bottom: 2.5rem;
+            padding-left: 2rem;
+            position: relative;
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        .event-item:before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 0.25rem;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: rgba(99, 102, 241, 0.8);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+        }
+
+        .event-item:after {
+            content: '';
+            position: absolute;
+            left: -0.75rem;
+            top: 1rem;
+            width: 1px;
+            height: calc(100% + 1.5rem);
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.4) 0%, transparent 100%);
+        }
+
+        .event-item:last-child:after {
+            display: none;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .event-year {
+            display: inline-block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: rgba(99, 102, 241, 1);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 0.5rem;
+        }
+
+        .event-description {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            margin-bottom: 0.75rem;
+        }
+
+        .event-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .event-topic {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            color: rgba(99, 102, 241, 0.9);
+        }
+
+        .era-nav {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            z-index: 50;
+            background-color: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .era-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            cursor: pointer;
+            background-color: rgba(99, 102, 241, 0.4);
+            border: 1px solid rgba(99, 102, 241, 0.6);
+            transition: all 0.3s ease;
+        }
+
+        .era-dot.active {
+            background-color: rgba(99, 102, 241, 1);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.6);
+            transform: scale(1.3);
+        }
+
+        .expand-hint {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: rgba(99, 102, 241, 0.7);
+            font-style: italic;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: linear-gradient(180deg, rgba(8, 8, 15, 0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .header-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .header-link:hover {
+            color: rgba(99, 102, 241, 1);
+        }
+
+        .scroll-hint {
+            position: fixed;
+            bottom: 5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(99, 102, 241, 0.6);
+            font-size: 0.85rem;
+            animation: bounce 2s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const eras = [
+            {
+                id: 1,
+                name: "The Foundation",
+                period: "1943–1974",
+                color: "from-blue-600 to-blue-500",
+                textColor: "text-blue-100",
+                accentColor: "rgba(59, 130, 246, 0.3)",
+                events: [
+                    { year: 1943, title: "McCulloch & Pitts", description: "Foundational paper on artificial neurons and the computational model of thought", topics: ["Neural Networks", "Theory"] },
+                    { year: 1956, title: "Dartmouth Summer Research Project", description: "Officially launched AI as an academic field with ambitions to create human-level machine intelligence", topics: ["AI Conference", "Founding"] },
+                    { year: 1966, title: "ELIZA & the First Chatbot", description: "Joseph Weizenbaum creates ELIZA, demonstrating human tendency to attribute intelligence to simple pattern matching", topics: ["NLP", "Conversation"] },
+                    { year: 1974, title: "First AI Winter Begins", description: "Funding and interest in AI research declined due to unmet expectations and limited computational power", topics: ["History", "Skepticism"] }
+                ]
+            },
+            {
+                id: 2,
+                name: "Expert Systems Era",
+                period: "1980–1987",
+                color: "from-purple-600 to-purple-500",
+                textColor: "text-purple-100",
+                accentColor: "rgba(147, 51, 234, 0.3)",
+                events: [
+                    { year: 1980, title: "Expert Systems Boom", description: "AI systems captured domain expert knowledge in rules, powering industrial applications and corporate investment", topics: ["Expert Systems", "Industry"] },
+                    { year: 1982, title: "Fifth Generation Computer Project", description: "Japan announces ambitious goal to build intelligent computers, sparking competition in AI research", topics: ["Hardware", "International"] },
+                    { year: 1987, title: "Expert Systems Collapse", description: "Expensive systems couldn't adapt to new domains; high maintenance costs led to second AI Winter", topics: ["Market Crash", "Limitations"] }
+                ]
+            },
+            {
+                id: 3,
+                name: "Statistical Learning",
+                period: "1997–2011",
+                color: "from-indigo-600 to-indigo-500",
+                textColor: "text-indigo-100",
+                accentColor: "rgba(99, 102, 241, 0.3)",
+                events: [
+                    { year: 1997, title: "Deep Blue defeats Kasparov", description: "IBM's chess-playing supercomputer beats world champion Garry Kasparov in a landmark symbolic victory", topics: ["Milestone", "Game AI", "Breakthrough"] },
+                    { year: 2002, title: "Rise of Machine Learning", description: "Shift from hand-coded rules to algorithms that learn patterns from data", topics: ["Machine Learning", "Methodology"] },
+                    { year: 2008, title: "Big Data Era", description: "Explosion of available data and computational resources enable scalable learning algorithms", topics: ["Data", "Infrastructure"] },
+                    { year: 2011, title: "IBM Watson wins Jeopardy!", description: "Natural language processing system defeats champions, proving AI could compete in human knowledge domains", topics: ["NLP", "Milestone"] }
+                ]
+            },
+            {
+                id: 4,
+                name: "Deep Learning Revolution",
+                period: "2012–2017",
+                color: "from-pink-600 to-pink-500",
+                textColor: "text-pink-100",
+                accentColor: "rgba(236, 72, 153, 0.3)",
+                events: [
+                    { year: 2012, title: "AlexNet & the Deep Learning Breakthrough", description: "Convolutional neural network wins ImageNet competition by huge margin, revolutionizing computer vision", topics: ["Deep Learning", "Breakthrough", "Vision"] },
+                    { year: 2014, title: "Generative Adversarial Networks (GANs)", description: "Ian Goodfellow introduces GANs, enabling neural networks to generate realistic synthetic content", topics: ["Generative AI", "Theory"] },
+                    { year: 2016, title: "AlphaGo defeats Lee Sedol", description: "DeepMind's Go-playing AI beats world champion using deep learning and Monte Carlo tree search—a watershed moment", topics: ["Game AI", "Milestone"] },
+                    { year: 2017, title: "Attention Is All You Need (Transformers)", description: "Vaswani et al. introduce Transformer architecture, becoming the foundation for modern large language models", topics: ["Breakthrough", "Architecture", "NLP"] }
+                ]
+            },
+            {
+                id: 5,
+                name: "Era of Foundation Models",
+                period: "2018–2026",
+                color: "from-amber-600 to-amber-500",
+                textColor: "text-amber-100",
+                accentColor: "rgba(217, 119, 6, 0.3)",
+                events: [
+                    { year: 2018, title: "BERT & GPT Release", description: "Google releases BERT; OpenAI releases first GPT—transformer-based models pre-trained on massive text corpora", topics: ["Foundation Models", "NLP"] },
+                    { year: 2020, title: "GPT-3 Emerges", description: "OpenAI releases GPT-3 with 175B parameters, demonstrating unprecedented zero-shot learning and few-shot adaptability", topics: ["Breakthrough", "Scaling", "GPT"] },
+                    { year: 2021, title: "Multimodal Models", description: "DALL-E, CLIP, and others blend vision and language; GPT can now reason across image, text, and other modalities", topics: ["Multimodal", "Vision", "Integration"] },
+                    { year: 2022, title: "ChatGPT & Generative AI Explosion", description: "ChatGPT reaches 100M users in 2 months; LLMs become mainstream, sparking global AI adoption wave", topics: ["Mainstream", "Generative", "Viral"] },
+                    { year: 2023, title: "Multimodal Reasoning", description: "GPT-4, Gemini, and Claude demonstrate advanced reasoning, code generation, and nuanced understanding", topics: ["Reasoning", "Capability"] },
+                    { year: 2024, title: "AI Agents & Agentic Systems", description: "Evolution toward autonomous AI agents with tool use, planning, and reasoning frameworks", topics: ["Agents", "Autonomy"] },
+                    { year: 2025, title: "Embodied AI & Real-World Integration", description: "AI systems begin operating in physical world with robotics, autonomous vehicles, and real-time decision-making", topics: ["Robotics", "Embodied", "Integration"] },
+                    { year: 2026, title: "Frontier: Reasoning, Reliability, & Safety", description: "Focus shifts to interpretability, robustness, alignment with human values, and trustworthy AI systems", topics: ["Safety", "Alignment", "Reliability"] }
+                ]
+            }
+        ];
+
+        function EraExplorer() {
+            const [expandedEra, setExpandedEra] = useState(null);
+            const [scrollPosition, setScrollPosition] = useState(0);
+            const eraRefs = useRef({});
+
+            useEffect(() => {
+                const handleScroll = () => {
+                    setScrollPosition(window.scrollY);
+                };
+                window.addEventListener('scroll', handleScroll);
+                return () => window.removeEventListener('scroll', handleScroll);
+            }, []);
+
+            const scrollToEra = (eraId) => {
+                const element = eraRefs.current[eraId];
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                    setExpandedEra(eraId);
+                }
+            };
+
+            const handleEraClick = (eraId) => {
+                setExpandedEra(expandedEra === eraId ? null : eraId);
+            };
+
+            return (
+                <div className="relative">
+                    <div className="parallax-bg" style={{
+                        transform: `translateY(${scrollPosition * 0.5}px)`
+                    }}></div>
+
+                    <header className="header">
+                        <div className="header-content">
+                            <h1 className="header-title">AI Era Journey</h1>
+                            <nav className="header-nav">
+                                <a href="ai-history-timeline.html" className="header-link">← Timeline View</a>
+                                <a href="index.html" className="header-link">← Portfolio</a>
+                            </nav>
+                        </div>
+                    </header>
+
+                    <div className="pt-20">
+                        {eras.map((era, index) => (
+                            <section key={era.id} ref={el => eraRefs.current[era.id] = el} className="era-section">
+                                <div 
+                                    className={`era-card-base ${expandedEra === era.id ? 'era-card-expanded' : 'era-card-collapsed'}`}
+                                    style={{
+                                        backgroundColor: expandedEra === era.id 
+                                            ? 'rgba(15, 23, 42, 0.7)' 
+                                            : 'rgba(30, 41, 59, 0.4)'
+                                    }}
+                                    onClick={() => handleEraClick(era.id)}
+                                >
+                                    <div className="era-title">{era.name}</div>
+                                    <div className="era-subtitle">{era.period}</div>
+                                    
+                                    {expandedEra !== era.id && (
+                                        <div className="expand-hint">Click to explore events from this era</div>
+                                    )}
+
+                                    {expandedEra === era.id && (
+                                        <div className="event-timeline">
+                                            {era.events.map((event, eventIndex) => (
+                                                <div key={eventIndex} className="event-item" style={{
+                                                    animationDelay: `${eventIndex * 0.1}s`
+                                                }}>
+                                                    <div className="event-year">{event.year}</div>
+                                                    <div className="event-title">{event.title}</div>
+                                                    <div className="event-description">{event.description}</div>
+                                                    <div className="event-topics">
+                                                        {event.topics.map((topic, topicIndex) => (
+                                                            <span key={topicIndex} className="event-topic">{topic}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </section>
+                        ))}
+                    </div>
+
+                    <div className="era-nav">
+                        {eras.map((era) => (
+                            <button
+                                key={era.id}
+                                className={`era-dot ${expandedEra === era.id ? 'active' : ''}`}
+                                onClick={() => scrollToEra(era.id)}
+                                title={era.name}
+                            />
+                        ))}
+                    </div>
+
+                    {expandedEra === null && (
+                        <div className="scroll-hint">↓ Scroll to explore or click dots to jump</div>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.render(<EraExplorer />, document.getElementById('root'));
+    </script>
+</body>
+</html>
