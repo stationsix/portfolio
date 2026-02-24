@@ -420,8 +420,8 @@
 
                 return (
                   <div key={era.id} className="mb-8" data-era-id={era.id}>
-                    <div className="relative pl-20 pb-8 -mt-8">
-                      <div className="absolute left-8 -top-8 bottom-0 w-1 bg-slate-300"></div>
+                    <div className="relative pl-32 pb-8 -mt-8">
+                      <div className="absolute left-24 -top-8 bottom-0 w-1 bg-slate-300"></div>
 
                       <div className={`text-base p-5 rounded-lg mb-10 relative z-10 transition-colors duration-300 ${
                         era.id === 'symbolic' ? 'border-indigo-700/50 bg-indigo-950/40' :
@@ -446,7 +446,7 @@
                       <div className="space-y-8">
                         {visibleEvents.map((event, idx) => (
                           <div key={idx} className={`relative ${getEventStyle(event)} transition-opacity duration-300`}>
-                            <div className="absolute top-2 text-xl font-bold text-slate-300 w-24 text-right flex items-center justify-end gap-2" style={{ left: '-134px' }}>
+                            <div className="absolute top-2 text-xl font-bold text-slate-300 w-24 text-right flex items-center justify-end gap-2" style={{ left: '-115px' }}>
                               <div>{event.year}</div>
                               <div className={`w-5 h-5 rounded-full shadow-lg border-2 border-slate-900 flex-shrink-0 ${
                                 era.id === 'symbolic' ? 'bg-indigo-500' :
