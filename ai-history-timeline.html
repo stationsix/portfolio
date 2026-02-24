@@ -16,7 +16,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    body { margin: 0; padding: 0; }
+    body { margin: 0; padding: 0; background: #08080f; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 3px; }
   </style>
 </head>
 <body>
@@ -203,37 +206,33 @@
       };
 
       return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
+        <div className="min-h-screen text-slate-200" style={{ background: '#08080f' }}>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="fixed top-4 right-4 z-50 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 transition"
+            className="fixed top-4 right-4 z-50 bg-indigo-600 text-white p-3 rounded-full shadow-lg hover:bg-indigo-700 transition"
             title={sidebarOpen ? "Close Key Concepts" : "Open Key Concepts"}
           >
             {sidebarOpen ? <ChevronRight size={24} /> : <BookOpen size={24} />}
           </button>
 
-          <div className={`fixed top-0 right-0 h-full bg-white shadow-2xl transition-transform duration-300 z-40 ${
+          <div className={`fixed top-0 right-0 h-full bg-slate-900/50 backdrop-blur-xl border-l border-white/10 shadow-2xl transition-transform duration-300 z-40 ${
             sidebarOpen ? 'translate-x-0' : 'translate-x-full'
           }`} style={{ width: '400px' }}>
             <div className="p-6 h-full overflow-y-auto">
               <div className="flex items-center gap-2 mb-4">
-                <BookOpen size={28} className="text-blue-600" />
-                <h2 className="text-2xl font-bold text-slate-800">Key Concepts</h2>
+                <BookOpen size={28} className="text-indigo-400" />
+                <h2 className="text-2xl font-bold text-slate-100">Key Concepts</h2>
               </div>
               
-              <div className={`mb-4 text-sm p-3 rounded-lg border-2 ${
-                eras.find(e => e.id === visibleEra)?.color || 'bg-blue-50'
-              } ${
-                eras.find(e => e.id === visibleEra)?.textColor || 'text-slate-800'
-              }`}>
-                <span className="font-bold">{eras.find(e => e.id === visibleEra)?.name || 'current era'}</span>
+              <div className="mb-4 text-sm p-3 rounded-lg border border-indigo-800/50 bg-indigo-950/40">
+                <span className="font-bold text-indigo-300">{eras.find(e => e.id === visibleEra)?.name || 'current era'}</span>
               </div>
               
               <div className="space-y-4">
                 {relevantConcepts.map((concept, idx) => (
-                  <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2 bg-slate-50 rounded-r">
-                    <h3 className="font-bold text-lg text-slate-800 mb-2">{concept.title}</h3>
-                    <p className="text-sm text-slate-600 mb-2 leading-relaxed">{concept.definition}</p>
+                  <div key={idx} className="border-l-4 border-indigo-500 pl-4 py-2 bg-white/5 rounded-r">
+                    <h3 className="font-bold text-lg text-slate-100 mb-2">{concept.title}</h3>
+                    <p className="text-sm text-slate-400 mb-2 leading-relaxed">{concept.definition}</p>
                     {concept.examples.length > 0 && (
                       <div className="text-xs text-slate-500">
                         <span className="font-semibold">Examples:</span> {concept.examples.join(', ')}
@@ -246,8 +245,13 @@
           </div>
 
           <div className={`transition-all duration-300 ${sidebarOpen ? 'mr-[400px]' : 'mr-0'}`}>
-            <div className="max-w-5xl mx-auto mb-12">
-              <h1 className="text-6xl font-black italic text-center mb-8 text-slate-800">
+            <div className="max-w-5xl mx-auto mb-12 pt-8">
+              <div className="flex items-center justify-center gap-3 mb-8">
+                <a href="index.html" className="text-slate-500 hover:text-slate-300 transition-colors text-sm">← Portfolio</a>
+                <span className="text-white/20">|</span>
+                <span className="text-xs font-semibold tracking-widest uppercase text-indigo-400">Joe Neill</span>
+              </div>
+              <h1 className="text-6xl font-black italic text-center mb-8 text-slate-100">
                 A BRIEF HISTORY OF AI
               </h1>
               
@@ -390,9 +394,9 @@
                 )}
                 
                 {selectedEvent.topics.length > 0 && (
-                  <div className="flex gap-2 flex-wrap mt-6 pt-6 border-t border-slate-200">
+                  <div className="flex gap-2 flex-wrap mt-6 pt-6 border-t border-white/10">
                     {selectedEvent.topics.map(topic => (
-                      <span key={topic} className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                      <span key={topic} className="px-4 py-2 bg-indigo-950/40 text-indigo-400 rounded-full text-sm font-medium border border-indigo-800/50">
                         {topic}
                       </span>
                     ))}
@@ -400,8 +404,12 @@
                 )}
               </div>
             </div>
-          )}
-        </div>
+          )}          
+          <footer className="border-t border-white/8 py-8 text-center mt-16">
+            <p className="text-slate-600 text-xs">
+              Built by <a href="index.html" className="text-indigo-400 hover:text-indigo-300">Joe Neill</a> &mdash; AI Coach &amp; Prompt Engineer &mdash; <a href="mailto:stationsix@gmail.com" className="text-indigo-400 hover:text-indigo-300">stationsix@gmail.com</a>
+            </p>
+          </footer>        </div>
       );
     };
 

@@ -432,6 +432,15 @@
       return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 md:p-8">
           <div className="max-w-6xl mx-auto">
+            {/* Header with Navigation */}
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <a href="index.html" className="text-slate-400 hover:text-slate-200 transition-colors text-sm">← Portfolio</a>
+                <span className="text-white/30">|</span>
+                <span className="text-xs font-semibold tracking-widest uppercase text-indigo-400">Joe Neill</span>
+              </div>
+            </div>
+            
             {/* Header */}
             <div className="text-center mb-8">
               <div className="flex items-center justify-center gap-2 mb-4">
@@ -565,6 +574,13 @@
               </div>
             )}
           </div>
+          
+          {/* Footer */}
+          <footer className="border-t border-white/8 py-8 text-center mt-16">
+            <p className="text-slate-500 text-xs">
+              Built by <a href="index.html" className="text-indigo-400 hover:text-indigo-300">Joe Neill</a> &mdash; AI Coach &amp; Prompt Engineer &mdash; <a href="mailto:stationsix@gmail.com" className="text-indigo-400 hover:text-indigo-300">stationsix@gmail.com</a>
+            </p>
+          </footer>
         </div>
       );
     };
