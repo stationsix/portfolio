@@ -197,19 +197,42 @@ Financial summary:
         id: 7,
         category: "Advanced Reasoning",
         difficulty: "Intermediate",
-        title: "Scratchpad / Think-Aloud",
-        description: "Instruct the model to reason explicitly before answering. This dramatically improves accuracy on complex problems — the model catches its own mistakes mid-thought.",
-        example: `Before giving your final answer, reason through this problem step by step in a <thinking> block.
+        title: "Source-Anchored / Grounding",
+        description: "Explicitly restrict the model to only what's in the provided document. Without this, models fill gaps with plausible-sounding fabrications. Essential for document Q&A, contracts, policy review, and any RAG-adjacent workflow.",
+        example: `You are a document analyst. Your answers must be grounded exclusively in the document provided below.
 
-In your thinking:
-- Identify any ambiguities in the question
-- Consider at least two different approaches
-- Note any assumptions you're making
+Rules:
+- If the answer is clearly stated in the document, answer it and quote the relevant passage
+- If the answer can be reasonably inferred from the document, answer it and mark it: [INFERRED]
+- If the answer is not in the document at all, respond only with: "Not addressed in this document."
+- Do not use outside knowledge under any circumstances
 
-After the thinking block, give your final answer in a <answer> block. Keep the answer concise.
+Question: {{QUESTION}}
 
-Question: {{PASTE_QUESTION_HERE}}`,
-        tip: "The thinking block doesn't need to be shown to end users — you can strip it programmatically and only surface the answer.",
+Document:
+"""
+{{PASTE_DOCUMENT_HERE}}
+"""`,
+        tip: "The three-tier response rule (stated / inferred / not present) is what prevents hallucination — without it, models bridge gaps silently.",
+      },
+      {
+        id: 7.5,
+        category: "Advanced Reasoning",
+        difficulty: "Intermediate",
+        title: "Role Reversal / Socratic Prompting",
+        description: "Flip the dynamic — instead of telling the model everything upfront, instruct it to ask you the questions it needs before attempting the task. Surfaces gaps in your brief and produces dramatically better-scoped outputs.",
+        example: `I need your help with the following task: {{BRIEF_TASK_DESCRIPTION}}
+
+Before you attempt this, ask me the clarifying questions you need to do it well.
+
+Guidelines for your questions:
+- Ask only what you genuinely need — not a generic checklist
+- Group related questions together
+- Maximum 5 questions
+- After I answer, confirm your understanding in one sentence, then complete the task
+
+Do not begin the task until you have asked your questions and I have responded.`,
+        tip: "The \"do not begin until I respond\" instruction is critical — without it, models often ask questions and then answer anyway using assumptions.",
       },
       {
         id: 8,
