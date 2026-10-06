@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FIND FRED</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="game">
+    <div class="topbar">
+      <h2 class="logo">FIND FRED</h2>
+      <a class="mute" href="../../index.html#games">&larr; Portfolio</a>
+      <button id="mute" class="mute" type="button" aria-pressed="false">SND ON</button>
+    </div>
+
+    <header class="hud">
+      <div class="stat target"><span class="label">Wanted</span><div id="target"></div></div>
+      <div class="stat"><span class="label">Round</span><span><span id="round">1</span>/<span id="total-rounds">8</span></span></div>
+      <div class="stat"><span class="label">Score</span><span id="score">000000</span></div>
+      <div class="stat"><span class="label">Hi-Score</span><span id="best">000000</span></div>
+      <div class="stat"><span class="label">Lives</span><span id="lives" class="lives" aria-live="polite"></span></div>
+    </header>
+
+    <div class="timer" aria-hidden="true"><div id="timer-bar"></div></div>
+    <p id="message" class="message" aria-live="polite">&nbsp;</p>
+
+    <div id="board" class="board" role="group" aria-label="Find Fred board"></div>
+
+    <div id="overlay" class="overlay">
+      <div class="panel">
+        <div id="overlay-art" class="overlay-art"></div>
+        <h1 id="overlay-title">FIND FRED</h1>
+        <p id="overlay-text"></p>
+        <button id="overlay-button" type="button">PRESS START</button>
+      </div>
+    </div>
+  </main>
+  <div class="crt" aria-hidden="true"></div>
+  <script src="script.js"></script>
+</body>
+</html>
