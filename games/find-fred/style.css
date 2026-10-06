@@ -23,7 +23,8 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.06em;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 .game {
@@ -71,8 +72,6 @@ body {
   padding: 6px 8px;
   cursor: pointer;
 }
-
-a.mute { text-decoration: none; }
 
 .mute:hover { background: var(--cyan); color: var(--bg); }
 
@@ -229,3 +228,38 @@ button#overlay-button:active { transform: translate(3px, 3px); box-shadow: 1px 1
 @media (max-width: 560px) {
   .hud { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* Portfolio navigation (same pattern as the AI Memory Game) */
+.site-nav {
+  position: relative;
+  z-index: 60;
+  width: 100%;
+  max-width: 800px;
+  padding: 14px 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.6rem;
+}
+
+.site-nav .back-link { color: #94a3b8; text-decoration: none; }
+.site-nav .back-link:hover { color: #e2e8f0; }
+.site-nav .sep { color: rgba(255, 255, 255, 0.3); }
+.site-nav .owner { color: #818cf8; letter-spacing: 0.15em; }
+
+.site-footer {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 32px;
+  padding: 24px 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-size: 0.5rem;
+  line-height: 2;
+  color: #64748b;
+  text-transform: none;
+}
+
+.site-footer p { margin: 0; }
+.site-footer a { color: #818cf8; text-decoration: none; }
+.site-footer a:hover { color: #a5b4fc; }
