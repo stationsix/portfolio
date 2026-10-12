@@ -3,684 +3,327 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Joe Neill — AI Coach &amp; Prompt Engineer</title>
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <meta name="theme-color" content="#6366f1" />
+  <title>Joe Neill · Notebook</title>
+  <meta name="description" content="A running notebook of things Joe Neill has built while exploring AI: timelines, reference tools, small games and experiments." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg: #08080f;
-      --surface: rgba(255, 255, 255, 0.05);
-      --border: rgba(255, 255, 255, 0.1);
-      --border-hover: rgba(99, 102, 241, 0.5);
-      --text: #e2e8f0;
-      --muted: #94a3b8;
+      --bg: #f7f7fd;
+      --surface: #ffffff;
+      --ink: #0f1226;
+      --ink-2: #4b5170;
+      --muted: #7a7f9c;
+      --line: rgba(15, 18, 38, 0.09);
+      --brand: #6366f1;
+      --brand-2: #8b5cf6;
+      --grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 55%, #ec4899 100%);
+      --soft: #f0f0ff;
+      --radius: 20px;
+      --shadow: 0 12px 32px -12px rgba(60, 50, 160, 0.28), 0 2px 6px rgba(15, 18, 38, 0.05);
+      --shadow-lg: 0 34px 70px -24px rgba(60, 50, 160, 0.4), 0 8px 20px -8px rgba(15, 18, 38, 0.1);
+      --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
     }
 
-    html { scroll-behavior: smooth; }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      margin: 0;
       min-height: 100vh;
-      overflow-x: hidden;
+      color: var(--ink);
+      font: 16px/1.6 var(--font);
+      -webkit-font-smoothing: antialiased;
+      background:
+        radial-gradient(900px 520px at 88% -8%, rgba(139, 92, 246, 0.2), transparent 60%),
+        radial-gradient(720px 500px at -8% 6%, rgba(99, 102, 241, 0.15), transparent 60%),
+        radial-gradient(640px 420px at 55% 112%, rgba(236, 72, 153, 0.11), transparent 60%),
+        var(--bg);
+      background-attachment: fixed;
     }
 
-    /* ── Background blobs ── */
-    .bg-blobs {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
+    h1, h2, h3 { margin: 0; line-height: 1.12; letter-spacing: -0.02em; }
+    p { margin: 0 0 12px; }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--brand-2);
     }
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.22;
-    }
-    .blob-1 {
-      width: 640px; height: 640px;
-      background: #6366f1;
-      top: -220px; left: -120px;
-      animation: float1 13s ease-in-out infinite;
-    }
-    .blob-2 {
-      width: 420px; height: 420px;
-      background: #a855f7;
-      top: 35%; right: -120px;
-      animation: float2 16s ease-in-out infinite;
-    }
-    .blob-3 {
-      width: 520px; height: 520px;
-      background: #2563eb;
-      bottom: -160px; left: 28%;
-      animation: float3 19s ease-in-out infinite;
-    }
-    @keyframes float1 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50%      { transform: translate(45px,35px) scale(1.06); }
-    }
-    @keyframes float2 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50%      { transform: translate(-30px,45px) scale(0.94); }
-    }
-    @keyframes float3 {
-      0%,100% { transform: translate(0,0) scale(1); }
-      50%      { transform: translate(25px,-35px) scale(1.09); }
+    .grad-text {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
-    /* ── Nav ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 16px 40px;
+    :focus-visible { outline: 3px solid rgba(99, 102, 241, 0.5); outline-offset: 2px; }
+
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+    /* ---------- Top bar ---------- */
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(8, 8, 15, 0.65);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo {
-      font-weight: 800;
-      font-size: 1.1rem;
-      text-decoration: none;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .nav-links { display: flex; gap: 32px; list-style: none; }
-    .nav-links a {
-      text-decoration: none;
-      color: var(--muted);
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: #f8fafc; }
-
-    /* ── Layout ── */
-    main { position: relative; z-index: 1; }
-
-    section {
-      max-width: 1000px;
+      gap: 12px;
+      max-width: 1040px;
       margin: 0 auto;
-      padding: 120px 24px;
+      padding: 18px 20px;
     }
-
-    .divider {
-      max-width: 1000px;
-      margin: 0 auto;
-      height: 1px;
-      background: var(--border);
-    }
-
-    /* ── Glass card ── */
-    .glass-card {
-      background: var(--surface);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      transition: border-color 0.2s, transform 0.25s, box-shadow 0.25s;
-    }
-    .glass-card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-4px);
-      box-shadow: 0 14px 44px rgba(99, 102, 241, 0.15);
-    }
-
-    /* ── Section labels ── */
-    .section-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: #818cf8;
-      margin-bottom: 12px;
-    }
-    .section-title {
-      font-size: clamp(1.75rem, 4vw, 2.5rem);
-      font-weight: 700;
-      color: #f8fafc;
-      letter-spacing: -0.5px;
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-    .section-sub {
-      font-size: 1rem;
-      color: var(--muted);
-      max-width: 560px;
-      line-height: 1.75;
-      margin-bottom: 48px;
-    }
-
-    /* ── Hero ── */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-top: 100px;
-    }
-    .hero-eyebrow {
+    .brand {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: var(--surface);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 28px;
-      width: fit-content;
-    }
-    .hero-eyebrow .dot {
-      width: 7px; height: 7px;
-      background: #4ade80;
-      border-radius: 50%;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100% { opacity: 1; transform: scale(1); }
-      50%      { opacity: 0.6; transform: scale(0.85); }
-    }
-    .hero-name {
-      font-size: clamp(3rem, 9vw, 5.75rem);
+      gap: 10px;
+      color: var(--ink);
       font-weight: 800;
-      line-height: 1.04;
-      letter-spacing: -2.5px;
-      color: #f8fafc;
-      margin-bottom: 14px;
+      letter-spacing: -0.02em;
+      text-decoration: none;
     }
-    .hero-title {
-      font-size: clamp(1.3rem, 3vw, 2rem);
-      font-weight: 600;
-      background: linear-gradient(135deg, #6366f1, #a855f7, #38bdf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 24px;
-    }
-    .hero-sub {
-      font-size: 1.1rem;
-      color: var(--muted);
-      max-width: 560px;
-      line-height: 1.75;
-      margin-bottom: 44px;
-    }
-    .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; }
-    .btn-primary {
-      padding: 14px 28px;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
+    .brand .mark {
+      display: grid;
+      place-items: center;
+      width: 32px; height: 32px;
+      border-radius: 9px;
+      background: var(--grad);
       color: #fff;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: opacity 0.2s, transform 0.2s;
+      font-size: 0.8rem;
+      box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.5);
     }
-    .btn-primary:hover { opacity: 0.88; transform: translateY(-2px); }
-    .btn-secondary {
-      padding: 14px 28px;
-      background: var(--surface);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .btn-secondary:hover { border-color: #6366f1; transform: translateY(-2px); }
-
-    /* ── About ── */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      align-items: start;
-    }
-    .about-text p {
-      color: var(--muted);
-      line-height: 1.85;
-      margin-bottom: 18px;
-      font-size: 1rem;
-    }
-    .about-text p:last-child { margin-bottom: 0; }
-    .about-text strong { color: var(--text); }
-    .about-stats { display: flex; flex-direction: column; gap: 14px; }
-    .about-stat {
-      padding: 22px 26px;
-    }
-    .about-stat-value {
-      font-size: 1.6rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .about-stat-label {
+    .topnav { display: flex; gap: 6px; }
+    .topnav a {
+      padding: 6px 12px;
+      border-radius: 999px;
       font-size: 0.85rem;
-      color: var(--muted);
-      line-height: 1.5;
+      font-weight: 600;
+      color: var(--ink-2);
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .topnav a:hover { background: rgba(255, 255, 255, 0.8); color: var(--brand); }
+
+    /* ---------- Intro ---------- */
+    .intro { padding: 56px 20px 40px; }
+    .intro h1 {
+      font-size: clamp(2.2rem, 5.4vw, 3.4rem);
+      font-weight: 800;
+      max-width: 15em;
+    }
+    .intro .lead {
+      max-width: 38rem;
+      margin: 20px 0 0;
+      font-size: 1.1rem;
+      color: var(--ink-2);
+    }
+    .intro .lead + .lead { margin-top: 12px; }
+
+    /* ---------- Sections ---------- */
+    .section { padding: 48px 20px; }
+    .section-head { max-width: 40rem; margin-bottom: 24px; }
+    .section-head h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); font-weight: 800; }
+    .section-head p { margin: 10px 0 0; color: var(--ink-2); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
     }
 
-    /* ── Projects ── */
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 22px;
-    }
-    .project-card {
-      padding: 28px;
-      text-decoration: none;
-      color: inherit;
+    /* ---------- Entry cards ---------- */
+    .card {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
-    .project-icon { display: flex; }
-    .project-icon svg { width: 32px; height: 32px; stroke: #818cf8; stroke-width: 1.5; }
-    .project-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #f1f5f9;
+    a.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+
+    .card .ico {
+      display: grid;
+      place-items: center;
+      width: 42px; height: 42px;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      background: var(--soft);
     }
-    .project-desc {
-      font-size: 0.88rem;
-      color: var(--muted);
-      line-height: 1.65;
-      flex: 1;
-    }
-    .project-footer {
+    .card .ico svg { width: 22px; height: 22px; stroke: var(--brand); stroke-width: 1.75; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .card p { margin: 0; color: var(--ink-2); font-size: 0.95rem; flex: 1; }
+    .card .meta {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 6px;
-    }
-    .project-tag {
-      padding: 4px 10px;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.25);
-      border-radius: 999px;
-      font-size: 0.74rem;
-      color: #818cf8;
-      font-weight: 500;
-    }
-    .project-arrow { display: flex; }
-    .project-arrow svg {
-      width: 16px; height: 16px;
-      stroke: var(--muted);
-      transition: transform 0.2s, stroke 0.2s;
-    }
-    .project-card:hover .project-arrow svg {
-      transform: translate(3px, -3px);
-      stroke: #818cf8;
-    }
-    .project-card-soon {
-      opacity: 0.45;
-      pointer-events: none;
-    }
-
-    /* ── Skills ── */
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 14px;
-    }
-    .skill-item {
-      padding: 20px 22px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .skill-icon { flex-shrink: 0; display: flex; }
-    .skill-icon svg { width: 22px; height: 22px; stroke: #818cf8; stroke-width: 1.5; }
-    .skill-name {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #f1f5f9;
-    }
-    .skill-sub {
-      font-size: 0.77rem;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-
-    /* ── Contact ── */
-    #contact { text-align: center; }
-    #contact .section-sub { margin-left: auto; margin-right: auto; }
-    .contact-links {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .contact-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 24px;
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 500;
-      font-size: 0.92rem;
-    }
-    .contact-link:hover { border-color: #6366f1; }
-    .contact-icon { display: flex; }
-    .contact-icon svg { width: 18px; height: 18px; stroke: #818cf8; stroke-width: 1.5; }
-
-    /* ── Footer ── */
-    footer {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      padding: 32px 24px;
+      margin-top: 18px;
       font-size: 0.78rem;
-      color: #475569;
-      border-top: 1px solid var(--border);
+      font-weight: 600;
+      color: var(--muted);
     }
+    .tag {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--brand);
+    }
+    .card .go { transition: transform 0.15s, color 0.15s; }
+    a.card:hover .go { transform: translate(2px, -2px); color: var(--brand); }
 
-    /* ── Responsive ── */
-    @media (max-width: 680px) {
-      nav { padding: 14px 20px; }
-      .nav-links { gap: 20px; }
-      section { padding: 80px 20px; }
-      .about-grid { grid-template-columns: 1fr; }
+    /* ---------- Workbench ---------- */
+    .bench { grid-template-columns: repeat(4, 1fr); }
+    .bench .aside { margin-top: 6px; font-size: 0.85rem; color: var(--muted); }
+    .bench .card { padding: 20px 22px; }
+    .bench .card p { flex: none; }
+    .bench .eyebrow { margin-bottom: 6px; }
+    .bench .tools { font-weight: 600; color: var(--ink); }
+
+    /* ---------- Footer ---------- */
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 28px 20px 48px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .footer nav { display: flex; gap: 18px; }
+    .footer a { color: var(--ink-2); font-weight: 600; text-decoration: none; }
+    .footer a:hover { color: var(--brand); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 900px) {
+      .grid, .bench { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .container, .topbar, .intro, .section, .footer { padding-left: 16px; padding-right: 16px; }
+      .grid, .bench { grid-template-columns: 1fr; }
+      .topnav a { padding: 6px 8px; }
+      .intro { padding-top: 32px; }
+      .section { padding-top: 32px; padding-bottom: 32px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <div class="bg-blobs">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
-
-  <nav>
-    <a href="#hero" class="nav-logo">JN</a>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#games">Games</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="mark">JN</span><span>Joe Neill</span></a>
+    <nav class="topnav">
+      <a href="#made">Made</a>
+      <a href="#play">Play</a>
+      <a href="#bench">Workbench</a>
+    </nav>
+  </header>
 
   <main>
-
-    <!-- ── Hero ── -->
-    <section id="hero">
-      <div class="hero-eyebrow">
-        <span class="dot"></span> Available for new opportunities
-      </div>
-      <h1 class="hero-name">Joe Neill</h1>
-      <p class="hero-title">AI Coach &amp; Prompt Engineer</p>
-      <p class="hero-sub">
-        I bridge the gap between what AI can do and what businesses actually need —
-        translating cutting-edge technology into real results, without the jargon.
+    <section class="container intro">
+      <p class="eyebrow">A working notebook</p>
+      <h1>Things I've built while figuring out <span class="grad-text">what AI is good for.</span></h1>
+      <p class="lead">
+        This is where I keep the things I make when I'm curious about something. Most of them
+        started as a question (how did we get here, what does a good prompt actually look like,
+        could I build a game in an afternoon) and turned into something you can click on.
       </p>
-      <div class="hero-cta">
-        <a href="#projects" class="btn-primary">See My Work</a>
-        <a href="#contact" class="btn-secondary">Get in Touch</a>
-      </div>
-    </section>
-
-    <div class="divider"></div>
-
-    <!-- ── About ── -->
-    <section id="about">
-      <p class="section-label">About Me</p>
-      <h2 class="section-title">The bridge between<br>tech and the rest of us</h2>
-      <div class="about-grid">
-        <div class="about-text">
-          <p>
-            I'm not a traditional developer — and that's exactly the point.
-            I've built <strong>real, working tools</strong> using AI, prompting, and low-code platforms,
-            and I can show any business what's possible when you stop waiting for a dev team to catch up.
-          </p>
-          <p>
-            As an <strong>AI coach and prompt engineer</strong>, I help organizations move from
-            "we should probably look into AI" to actually using it — embedded in their workflows,
-            their products, and their thinking. I speak both languages: the technical one and the human one.
-          </p>
-          <p>
-            My sweet spot is sitting at the table with builders <em>and</em> decision-makers,
-            helping each side understand the other. I love getting into the weeds of how things work
-            so I can explain them clearly to the people who matter.
-          </p>
-        </div>
-        <div class="about-stats">
-          <div class="glass-card about-stat">
-            <div class="about-stat-value">AI-First</div>
-            <div class="about-stat-label">Building with prompts and low-code — not waiting for permission</div>
-          </div>
-          <div class="glass-card about-stat">
-            <div class="about-stat-value">Bridge</div>
-            <div class="about-stat-label">Fluent in both tech and business — a genuinely rare combination</div>
-          </div>
-          <div class="glass-card about-stat">
-            <div class="about-stat-value">Coach</div>
-            <div class="about-stat-label">Helping teams grasp what AI can actually do for them — today</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="divider"></div>
-
-    <!-- ── Projects ── -->
-    <section id="projects">
-      <p class="section-label">Projects</p>
-      <h2 class="section-title">Built with AI,<br>from scratch</h2>
-      <p class="section-sub">
-        Every project here was designed and built using AI tools and prompting —
-        proof that "non-technical" doesn't mean non-capable.
+      <p class="lead">
+        None of it was built by a traditional developer. I work out the ideas, talk them through
+        with AI tools, and keep going until the thing on the screen matches the thing in my head.
+        Some of these are polished, and some are still a little rough around the edges.
       </p>
-      <div class="projects-grid">
-
-        <a class="glass-card project-card" href="ai-history-timeline.html">
-          <div class="project-icon"><i data-lucide="clock"></i></div>
-          <div class="project-title">A Brief History of AI</div>
-          <p class="project-desc">
-            An interactive timeline tracing the key milestones in artificial intelligence —
-            from Turing's foundational ideas to today's large language models.
-          </p>
-          <div class="project-footer">
-            <span class="project-tag">Interactive Timeline</span>
-            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
-          </div>
-        </a>
-
-        <a class="glass-card project-card" href="ai-era-explorer.html">
-          <div class="project-icon"><i data-lucide="zap"></i></div>
-          <div class="project-title">AI Era Journey</div>
-          <p class="project-desc">
-            A cinematic, parallax-driven explorer of AI history — navigate through eras and discover the breakthrough moments that shaped modern AI.
-          </p>
-          <div class="project-footer">
-            <span class="project-tag">Experimental UI</span>
-            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
-          </div>
-        </a>
-
-        <a class="glass-card project-card" href="ai-prompt-cheatsheet.html">
-          <div class="project-icon"><i data-lucide="library"></i></div>
-          <div class="project-title">Prompt Engineering Cheat Sheet</div>
-          <p class="project-desc">
-            A filterable reference of advanced prompting techniques — JSON output, prompt chaining, self-critique loops, and more. Built as a coaching leave-behind.
-          </p>
-          <div class="project-footer">
-            <span class="project-tag">Reference Tool</span>
-            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
-          </div>
-        </a>
-
-        <div class="glass-card project-card project-card-soon">
-          <div class="project-icon"><i data-lucide="sparkles"></i></div>
-          <div class="project-title">More Coming Soon</div>
-          <p class="project-desc">
-            Always building. Check back for new experiments in AI, prompting, and low-code tools.
-          </p>
-          <div class="project-footer">
-            <span class="project-tag">In Progress</span>
-          </div>
-        </div>
-
-      </div>
     </section>
 
-    <div class="divider"></div>
-
-    <!-- ── Games ── -->
-    <section id="games">
-      <p class="section-label">Games</p>
-      <h2 class="section-title">Play something</h2>
-      <p class="section-sub">
-        A few small games and interactive tools built with AI and prompting. Take a break and give one a go.
-      </p>
-      <div class="projects-grid">
-
-        <a class="glass-card project-card" href="games/ai-memory-game%20v1.html">
-          <div class="project-icon"><i data-lucide="brain"></i></div>
-          <div class="project-title">AI Memory Game</div>
-          <p class="project-desc">
-            A card-matching memory game featuring AI concepts, researchers, and breakthroughs.
-            Learn the landscape while you play.
-          </p>
-          <div class="project-footer">
-            <span class="project-tag">Game</span>
-            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
-          </div>
-        </a>
-
-        <a class="glass-card project-card" href="https://icebreaker-map.onrender.com" target="_blank" rel="noopener">
-          <div class="project-icon"><i data-lucide="map-pin"></i></div>
-          <div class="project-title">Icebreaker Map</div>
-          <p class="project-desc">
-            A live icebreaker for rooms and workshops. Guests scan a QR code, answer a fun question,
-            and appear as pins on a shared map in real time. First load may take a few seconds to wake up.
-          </p>
-          <div class="project-footer">
-            <span class="project-tag">Live App</span>
-            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
-          </div>
-        </a>
-
-        <a class="glass-card project-card" href="games/find-fred/index.html">
-          <div class="project-icon"><i data-lucide="gamepad-2"></i></div>
-          <div class="project-title">Find Fred</div>
-          <p class="project-desc">
-            An 80s arcade-style spotting game. Pick Fred out of a growing crowd of pixel-art people
-            before the clock runs out. Every round the board gets bigger and the look-alikes get trickier.
-          </p>
-          <div class="project-footer">
-            <span class="project-tag">Arcade Game</span>
-            <span class="project-arrow"><i data-lucide="arrow-up-right"></i></span>
-          </div>
-        </a>
-
+    <section class="container section" id="made">
+      <div class="section-head">
+        <p class="eyebrow">Made</p>
+        <h2>Explorations</h2>
+        <p>Mostly about AI itself, where it came from and how to work with it.</p>
       </div>
-    </section>
-
-    <div class="divider"></div>
-
-    <!-- ── Skills ── -->
-    <section id="skills">
-      <p class="section-label">Skills &amp; Tools</p>
-      <h2 class="section-title">What I bring to the table</h2>
-      <p class="section-sub">
-        A mix of AI fluency, communication craft, and hands-on building experience.
-      </p>
-      <div class="skills-grid">
-        <div class="glass-card skill-item">
-          <div class="skill-icon"><i data-lucide="bot"></i></div>
-          <div>
-            <div class="skill-name">Prompt Engineering</div>
-            <div class="skill-sub">Claude, ChatGPT, Gemini</div>
-          </div>
-        </div>
-        <div class="glass-card skill-item">
-          <div class="skill-icon"><i data-lucide="zap"></i></div>
-          <div>
-            <div class="skill-name">Vibe Coding</div>
-            <div class="skill-sub">Cursor, Bolt, Claude Code</div>
-          </div>
-        </div>
-        <div class="glass-card skill-item">
-          <div class="skill-icon"><i data-lucide="workflow"></i></div>
-          <div>
-            <div class="skill-name">Workflow Automation</div>
-            <div class="skill-sub">Zapier, Make, n8n</div>
-          </div>
-        </div>
-        <div class="glass-card skill-item">
-          <div class="skill-icon"><i data-lucide="target"></i></div>
-          <div>
-            <div class="skill-name">AI Coaching</div>
-            <div class="skill-sub">Training teams to work with AI</div>
-          </div>
-        </div>
-        <div class="glass-card skill-item">
-          <div class="skill-icon"><i data-lucide="message-circle"></i></div>
-          <div>
-            <div class="skill-name">Stakeholder Translation</div>
-            <div class="skill-sub">Tech ↔ Business communication</div>
-          </div>
-        </div>
-        <div class="glass-card skill-item">
-          <div class="skill-icon"><i data-lucide="layers"></i></div>
-          <div>
-            <div class="skill-name">Low-Code / No-Code</div>
-            <div class="skill-sub">Building without a dev team</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <div class="divider"></div>
-
-    <!-- ── Contact ── -->
-    <section id="contact">
-      <p class="section-label">Contact</p>
-      <h2 class="section-title">Let's talk</h2>
-      <p class="section-sub">
-        Whether you're looking to bring AI into your business, need a coach for your team,
-        or just want to geek out about what's possible — I'm easy to reach.
-      </p>
-      <div class="contact-links">
-        <a href="mailto:stationsix@gmail.com" class="glass-card contact-link">
-          <span class="contact-icon"><i data-lucide="mail"></i></span> Email Me
+      <div class="grid">
+        <a class="card" href="ai-history-timeline.html">
+          <div class="ico"><i data-lucide="clock"></i></div>
+          <h3>A Brief History of AI</h3>
+          <p>An interactive timeline of the milestones in artificial intelligence, from Turing's early ideas to today's large language models.</p>
+          <div class="meta"><span class="tag">Timeline</span><span class="go">↗</span></div>
         </a>
-        <a href="https://linkedin.com/in/joeneill" target="_blank" rel="noopener" class="glass-card contact-link">
-          <span class="contact-icon"><i data-lucide="linkedin"></i></span> LinkedIn
+        <a class="card" href="ai-era-explorer.html">
+          <div class="ico"><i data-lucide="zap"></i></div>
+          <h3>AI Era Journey</h3>
+          <p>The same history told another way, as a parallax scroll through eras. I wanted to see whether motion could make the timeline feel more like a place.</p>
+          <div class="meta"><span class="tag">Experiment</span><span class="go">↗</span></div>
         </a>
-        <a href="https://github.com/stationsix" target="_blank" rel="noopener" class="glass-card contact-link">
-          <span class="contact-icon"><i data-lucide="github"></i></span> GitHub
+        <a class="card" href="ai-prompt-cheatsheet.html">
+          <div class="ico"><i data-lucide="library"></i></div>
+          <h3>Prompt Engineering Cheat Sheet</h3>
+          <p>A filterable collection of prompting techniques I keep coming back to, including structured JSON output, prompt chaining and self-critique loops.</p>
+          <div class="meta"><span class="tag">Reference</span><span class="go">↗</span></div>
         </a>
       </div>
     </section>
 
+    <section class="container section" id="play">
+      <div class="section-head">
+        <p class="eyebrow">Play</p>
+        <h2>Games and toys</h2>
+        <p>Small things built mostly for the fun of it.</p>
+      </div>
+      <div class="grid">
+        <a class="card" href="games/find-fred/index.html">
+          <div class="ico"><i data-lucide="gamepad-2"></i></div>
+          <h3>Find Fred</h3>
+          <p>An 80s arcade-style spotting game. Find Fred in a growing crowd of pixel people before the clock runs out, while the board gets bigger and the look-alikes get trickier.</p>
+          <div class="meta"><span class="tag">Arcade</span><span class="go">↗</span></div>
+        </a>
+        <a class="card" href="games/ai-memory-game%20v1.html">
+          <div class="ico"><i data-lucide="brain"></i></div>
+          <h3>AI Memory Game</h3>
+          <p>A card-matching game built from AI concepts, researchers and breakthroughs, so you pick up a bit of the history while you play.</p>
+          <div class="meta"><span class="tag">Cards</span><span class="go">↗</span></div>
+        </a>
+        <a class="card" href="https://icebreaker-map.onrender.com" target="_blank" rel="noopener">
+          <div class="ico"><i data-lucide="map-pin"></i></div>
+          <h3>Icebreaker Map</h3>
+          <p>A room-sized icebreaker. People scan a QR code, answer a question and show up as pins on a shared map in real time. (It's on a free host, so the first load can take a few seconds to wake up.)</p>
+          <div class="meta"><span class="tag">Live app</span><span class="go">↗</span></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="container section" id="bench">
+      <div class="section-head">
+        <p class="eyebrow">Workbench</p>
+        <h2>What I've been reaching for</h2>
+      </div>
+      <div class="grid bench">
+        <div class="card"><p class="eyebrow">Building with</p><p class="tools">Claude Code, Codex</p></div>
+        <div class="card"><p class="eyebrow">Made from</p><p class="tools">React, Flask, Leaflet</p></div>
+        <div class="card"><p class="eyebrow">Hosted on</p><p class="tools">GitHub Pages, Render</p></div>
+        <div class="card"><p class="eyebrow">Automating with</p><p class="tools">Make</p><p class="aside">n8n is on my radar.</p></div>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    &copy; 2025 Joe Neill &mdash; Built with AI
+  <footer class="container footer">
+    <span>Joe Neill · Built with AI · Still adding to it</span>
+    <nav>
+      <a href="https://github.com/stationsix" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://linkedin.com/in/joeneill" target="_blank" rel="noopener">LinkedIn</a>
+    </nav>
   </footer>
 
+  <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script>lucide.createIcons();</script>
+
 </body>
 </html>
