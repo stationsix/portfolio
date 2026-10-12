@@ -408,7 +408,7 @@
       <div class="section-head">
         <p class="eyebrow">Path to production</p>
         <h2>How ideas reach production</h2>
-        <p>Every project here follows a thread: which AI tool it started in, then source control, a build step (sometimes none), a host, and finally a URL you can open.</p>
+        <p>Every project here follows a thread: which AI tool it started in, where I worked on it, then source control, a build step (sometimes none), a host, and finally a URL you can open.</p>
       </div>
       <div class="path-wrap">
         <p class="path-count"><b id="path-total">6</b> shipped</p>
@@ -444,17 +444,17 @@
 
   <script>
     (() => {
-      const stages = ["Started in", "Source control", "Build", "Host", "Live"];
+      const stages = ["Started in", "Workspace", "Source control", "Build", "Host", "Live"];
       const projects = [
-        { id: "icebreaker", color: "#6366f1", live: "Icebreaker Map",  path: ["Claude", "GitHub (public)", "Node + Express", "Render"] },
-        { id: "fred",       color: "#ec4899", live: "Find Fred",       path: ["Claude", "GitHub (public)", "None (static)", "GitHub Pages"] },
-        { id: "timeline",   color: "#8b5cf6", live: "AI History",      path: ["Copilot", "GitHub (public)", "None (static)", "GitHub Pages"] },
-        { id: "era",        color: "#0ea5e9", live: "AI Era Journey",  path: ["Copilot", "GitHub (public)", "None (static)", "GitHub Pages"] },
-        { id: "cheatsheet", color: "#14b8a6", live: "Prompt Cheatsheet", path: ["Copilot", "GitHub (public)", "None (static)", "GitHub Pages"] },
-        { id: "memory",     color: "#f59e0b", live: "AI Memory Game",  path: ["Copilot", "GitHub (public)", "None (static)", "GitHub Pages"] }
+        { id: "icebreaker", color: "#6366f1", live: "Icebreaker Map",  path: ["Claude", "Terminal", "GitHub (public)", "Node + Express", "Render"] },
+        { id: "fred",       color: "#ec4899", live: "Find Fred",       path: ["Claude", "Terminal", "GitHub (public)", "None (static)", "GitHub Pages"] },
+        { id: "timeline",   color: "#8b5cf6", live: "AI History",      path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] },
+        { id: "era",        color: "#0ea5e9", live: "AI Era Journey",  path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] },
+        { id: "cheatsheet", color: "#14b8a6", live: "Prompt Cheatsheet", path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] },
+        { id: "memory",     color: "#f59e0b", live: "AI Memory Game",  path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] }
       ];
       const NS = "http://www.w3.org/2000/svg", svg = document.getElementById("path-svg");
-      const W = 940, top = 64, gap = 54, xs = stages.map((_, i) => 100 + i * 185);
+      const W = 940, top = 64, gap = 54, xs = stages.map((_, i) => 90 + i * 152);
       const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); (p || svg).appendChild(e); return e; };
 
       document.getElementById("path-total").textContent = projects.length;
