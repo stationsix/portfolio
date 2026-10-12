@@ -146,20 +146,40 @@
       box-shadow: var(--shadow);
       color: inherit;
       text-decoration: none;
+      overflow: hidden;
       transition: transform 0.15s, box-shadow 0.15s;
     }
     a.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
 
+    .card.has-shot { padding: 0; }
+    .shot {
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: #1a1838;
+      border-bottom: 1px solid var(--line);
+    }
+    .shot img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      transition: transform 0.4s ease;
+    }
+    a.card:hover .shot img { transform: scale(1.04); }
+    .card .body { display: flex; flex-direction: column; flex: 1; padding: 20px 22px 22px; }
+
+    .title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
     .card .ico {
+      flex: none;
       display: grid;
       place-items: center;
-      width: 42px; height: 42px;
-      margin-bottom: 16px;
-      border-radius: 12px;
+      width: 32px; height: 32px;
+      border-radius: 10px;
       background: var(--soft);
     }
-    .card .ico svg { width: 22px; height: 22px; stroke: var(--brand); stroke-width: 1.75; }
-    .card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+    .card .ico svg { width: 18px; height: 18px; stroke: var(--brand); stroke-width: 1.75; }
+    .card h3 { font-size: 1.1rem; font-weight: 700; }
     .card p { margin: 0; color: var(--ink-2); font-size: 0.95rem; flex: 1; }
     .card .meta {
       display: flex;
@@ -178,6 +198,38 @@
     }
     .card .go { transition: transform 0.15s, color 0.15s; }
     a.card:hover .go { transform: translate(2px, -2px); color: var(--brand); }
+
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+
+    /* ---------- Featured ---------- */
+    .feature {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      box-shadow: var(--shadow-lg);
+    }
+    .feature::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: var(--grad);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .feature .shot { aspect-ratio: auto; min-height: 320px; border-bottom: 0; border-right: 1px solid var(--line); }
+    .feature .shot img { object-position: left center; }
+    .feature .body { padding: 30px 30px 28px; justify-content: center; }
+    .card .eyebrow { color: var(--brand-2); font-size: 0.74rem; flex: none; }
+    .feature .eyebrow { margin-bottom: 12px; }
+    .feature h3 { font-size: 1.6rem; font-weight: 800; }
+    .feature .title-row { margin-bottom: 12px; }
+    .feature p { flex: none; font-size: 1rem; }
+    .feature p + p { margin-top: 10px; }
+    .feature .note { font-size: 0.88rem; color: var(--muted); }
 
     /* ---------- Workbench ---------- */
     .bench { grid-template-columns: repeat(4, 1fr); }
@@ -204,10 +256,14 @@
     /* ---------- Responsive ---------- */
     @media (max-width: 900px) {
       .grid, .bench { grid-template-columns: 1fr 1fr; }
+      .feature { grid-template-columns: 1fr; }
+      .feature .shot { min-height: 0; aspect-ratio: 16 / 10; border-right: 0; border-bottom: 1px solid var(--line); }
+      .feature .body { padding: 22px; }
     }
     @media (max-width: 560px) {
       .container, .topbar, .intro, .section, .footer { padding-left: 16px; padding-right: 16px; }
-      .grid, .bench { grid-template-columns: 1fr; }
+      .grid, .grid.two, .bench { grid-template-columns: 1fr; }
+      .feature h3 { font-size: 1.35rem; }
       .topnav a { padding: 6px 8px; }
       .intro { padding-top: 32px; }
       .section { padding-top: 32px; padding-bottom: 32px; }
@@ -244,6 +300,23 @@
       </p>
     </section>
 
+    <section class="container section" id="featured">
+      <div class="section-head">
+        <h2>Featured Build</h2>
+      </div>
+      <a class="card has-shot feature" href="https://icebreaker-map.onrender.com" target="_blank" rel="noopener">
+        <div class="shot"><img src="img/shots/icebreaker.jpg" alt="Icebreaker Map start screen, with suggested questions and a Start session button" width="800" height="500"></div>
+        <div class="body">
+          <p class="eyebrow">Live app</p>
+          <div class="title-row"><span class="ico"><i data-lucide="map-pin"></i></span><h3>Icebreaker Map</h3></div>
+          <p>A room-sized icebreaker for classes, workshops and team meetings. You put a QR code on the screen, everyone answers one easy question from their phone, and the room fills in as pins on a shared map in real time.</p>
+          <p>Click any pin to read that person's answer. Pins are rounded to the city, ZIP codes are thrown away once they're used, and every session clears itself after 12 hours.</p>
+          <p class="note">(It runs on a free host, so the first load can take a few seconds to wake up.)</p>
+          <div class="meta"><span class="tag">Open the app</span><span class="go">↗</span></div>
+        </div>
+      </a>
+    </section>
+
     <section class="container section" id="made">
       <div class="section-head">
         <p class="eyebrow">Made</p>
@@ -251,23 +324,29 @@
         <p>Mostly about AI itself, where it came from and how to work with it.</p>
       </div>
       <div class="grid">
-        <a class="card" href="ai-history-timeline.html">
-          <div class="ico"><i data-lucide="clock"></i></div>
-          <h3>A Brief History of AI</h3>
-          <p>An interactive timeline of the milestones in artificial intelligence, from Turing's early ideas to today's large language models.</p>
-          <div class="meta"><span class="tag">Timeline</span><span class="go">↗</span></div>
+        <a class="card has-shot" href="ai-history-timeline.html">
+          <div class="shot"><img src="img/shots/timeline.jpg" alt="A Brief History of AI timeline, showing the 1950s era with the Turing test and Dartmouth Conference" width="800" height="500" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row"><span class="ico"><i data-lucide="clock"></i></span><h3>A Brief History of AI</h3></div>
+            <p>An interactive timeline of the milestones in artificial intelligence, from Turing's early ideas to today's large language models.</p>
+            <div class="meta"><span class="tag">Timeline</span><span class="go">↗</span></div>
+          </div>
         </a>
-        <a class="card" href="ai-era-explorer.html">
-          <div class="ico"><i data-lucide="zap"></i></div>
-          <h3>AI Era Journey</h3>
-          <p>The same history told another way, as a parallax scroll through eras. I wanted to see whether motion could make the timeline feel more like a place.</p>
-          <div class="meta"><span class="tag">Experiment</span><span class="go">↗</span></div>
+        <a class="card has-shot" href="ai-era-explorer.html">
+          <div class="shot"><img src="img/shots/era.jpg" alt="AI Era Journey opening screen, showing The Foundation era from 1943 to 1974" width="800" height="500" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row"><span class="ico"><i data-lucide="zap"></i></span><h3>AI Era Journey</h3></div>
+            <p>The same history told another way, as a parallax scroll through eras. I wanted to see whether motion could make the timeline feel more like a place.</p>
+            <div class="meta"><span class="tag">Experiment</span><span class="go">↗</span></div>
+          </div>
         </a>
-        <a class="card" href="ai-prompt-cheatsheet.html">
-          <div class="ico"><i data-lucide="library"></i></div>
-          <h3>Prompt Engineering Cheat Sheet</h3>
-          <p>A filterable collection of prompting techniques I keep coming back to, including structured JSON output, prompt chaining and self-critique loops.</p>
-          <div class="meta"><span class="tag">Reference</span><span class="go">↗</span></div>
+        <a class="card has-shot" href="ai-prompt-cheatsheet.html">
+          <div class="shot"><img src="img/shots/cheatsheet.jpg" alt="Prompt Engineering Cheat Sheet, with filter tabs and technique cards showing example prompts" width="800" height="500" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row"><span class="ico"><i data-lucide="library"></i></span><h3>Prompt Engineering Cheat Sheet</h3></div>
+            <p>A filterable collection of prompting techniques I keep coming back to, including structured JSON output, prompt chaining and self-critique loops.</p>
+            <div class="meta"><span class="tag">Reference</span><span class="go">↗</span></div>
+          </div>
         </a>
       </div>
     </section>
@@ -278,24 +357,22 @@
         <h2>Games and toys</h2>
         <p>Small things built mostly for the fun of it.</p>
       </div>
-      <div class="grid">
-        <a class="card" href="games/find-fred/index.html">
-          <div class="ico"><i data-lucide="gamepad-2"></i></div>
-          <h3>Find Fred</h3>
-          <p>An 80s arcade-style spotting game. Find Fred in a growing crowd of pixel people before the clock runs out, while the board gets bigger and the look-alikes get trickier.</p>
-          <div class="meta"><span class="tag">Arcade</span><span class="go">↗</span></div>
+      <div class="grid two">
+        <a class="card has-shot" href="games/find-fred/index.html">
+          <div class="shot"><img src="img/shots/fred.jpg" alt="Find Fred title screen in 80s arcade style, with a pixel-art Fred and a Press Start button" width="800" height="500" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row"><span class="ico"><i data-lucide="gamepad-2"></i></span><h3>Find Fred</h3></div>
+            <p>An 80s arcade-style spotting game. Find Fred in a growing crowd of pixel people before the clock runs out, while the board gets bigger and the look-alikes get trickier.</p>
+            <div class="meta"><span class="tag">Arcade</span><span class="go">↗</span></div>
+          </div>
         </a>
-        <a class="card" href="games/ai-memory-game%20v1.html">
-          <div class="ico"><i data-lucide="brain"></i></div>
-          <h3>AI Memory Game</h3>
-          <p>A card-matching game built from AI concepts, researchers and breakthroughs, so you pick up a bit of the history while you play.</p>
-          <div class="meta"><span class="tag">Cards</span><span class="go">↗</span></div>
-        </a>
-        <a class="card" href="https://icebreaker-map.onrender.com" target="_blank" rel="noopener">
-          <div class="ico"><i data-lucide="map-pin"></i></div>
-          <h3>Icebreaker Map</h3>
-          <p>A room-sized icebreaker. People scan a QR code, answer a question and show up as pins on a shared map in real time. (It's on a free host, so the first load can take a few seconds to wake up.)</p>
-          <div class="meta"><span class="tag">Live app</span><span class="go">↗</span></div>
+        <a class="card has-shot" href="games/ai-memory-game%20v1.html">
+          <div class="shot"><img src="img/shots/memory.jpg" alt="AI Memory Game board with six face-down purple cards" width="800" height="500" loading="lazy"></div>
+          <div class="body">
+            <div class="title-row"><span class="ico"><i data-lucide="brain"></i></span><h3>AI Memory Game</h3></div>
+            <p>A card-matching game built from AI concepts, researchers and breakthroughs, so you pick up a bit of the history while you play.</p>
+            <div class="meta"><span class="tag">Cards</span><span class="go">↗</span></div>
+          </div>
         </a>
       </div>
     </section>
