@@ -239,6 +239,32 @@
     .bench .eyebrow { margin-bottom: 6px; }
     .bench .tools { font-weight: 600; color: var(--ink); }
 
+
+    /* ---------- Path to production ---------- */
+    .path-wrap {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 20px 12px;
+      overflow-x: auto;
+    }
+    .path-count { margin: 0 0 4px; font-size: 0.85rem; font-weight: 700; color: var(--ink-2); }
+    .path-count b { color: var(--brand); font-size: 1.1rem; }
+    #path-svg { display: block; width: 100%; min-width: 760px; height: auto; }
+    #path-svg .stage-label { font: 700 10.5px var(--font); letter-spacing: 0.12em; text-transform: uppercase; fill: var(--muted); }
+    #path-svg .node-label { font: 600 11px var(--font); fill: var(--ink-2); }
+    #path-svg .thread { fill: none; stroke-width: 3; stroke-linecap: round; opacity: 0.85; transition: opacity 0.2s, stroke-width 0.2s; }
+    #path-svg .hit { fill: none; stroke: transparent; stroke-width: 18; cursor: pointer; }
+    #path-svg .dot { stroke: #fff; stroke-width: 2; transition: opacity 0.2s; }
+    #path-svg .node-label, #path-svg .live-label { transition: opacity 0.2s; }
+    #path-svg .live-label { font: 700 12px var(--font); fill: var(--ink); }
+    #path-svg.has-active .dim { opacity: 0.1; }
+    #path-svg.has-active .on .thread { stroke-width: 4.5; opacity: 1; }
+    .path-hint { margin: 6px 0 0; font-size: 0.78rem; color: var(--muted); }
+    .card.flash { animation: flash 1.4s ease; }
+    @keyframes flash { 0%, 40% { box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.45), var(--shadow-lg); } }
+
     /* ---------- Footer ---------- */
     .footer {
       display: flex;
@@ -278,6 +304,7 @@
   <header class="topbar">
     <a class="brand" href="#"><span class="mark">JN</span><span>Joe Neill</span></a>
     <nav class="topnav">
+      <a href="#path">Path</a>
       <a href="#made">Made</a>
       <a href="#play">Play</a>
       <a href="#bench">Workbench</a>
@@ -304,7 +331,7 @@
       <div class="section-head">
         <h2>Featured Build</h2>
       </div>
-      <a class="card has-shot feature" href="https://icebreaker-map.onrender.com" target="_blank" rel="noopener">
+      <a id="card-icebreaker" class="card has-shot feature" href="https://icebreaker-map.onrender.com" target="_blank" rel="noopener">
         <div class="shot"><img src="img/shots/icebreaker.jpg" alt="Icebreaker Map start screen, with suggested questions and a Start session button" width="800" height="500"></div>
         <div class="body">
           <p class="eyebrow">Live app</p>
@@ -324,7 +351,7 @@
         <p>Mostly about AI itself, where it came from and how to work with it.</p>
       </div>
       <div class="grid">
-        <a class="card has-shot" href="ai-history-timeline.html">
+        <a id="card-timeline" class="card has-shot" href="ai-history-timeline.html">
           <div class="shot"><img src="img/shots/timeline.jpg" alt="A Brief History of AI timeline, showing the 1950s era with the Turing test and Dartmouth Conference" width="800" height="500" loading="lazy"></div>
           <div class="body">
             <div class="title-row"><span class="ico"><i data-lucide="clock"></i></span><h3>A Brief History of AI</h3></div>
@@ -332,7 +359,7 @@
             <div class="meta"><span class="tag">Timeline</span><span class="go">↗</span></div>
           </div>
         </a>
-        <a class="card has-shot" href="ai-era-explorer.html">
+        <a id="card-era" class="card has-shot" href="ai-era-explorer.html">
           <div class="shot"><img src="img/shots/era.jpg" alt="AI Era Journey opening screen, showing The Foundation era from 1943 to 1974" width="800" height="500" loading="lazy"></div>
           <div class="body">
             <div class="title-row"><span class="ico"><i data-lucide="zap"></i></span><h3>AI Era Journey</h3></div>
@@ -340,7 +367,7 @@
             <div class="meta"><span class="tag">Experiment</span><span class="go">↗</span></div>
           </div>
         </a>
-        <a class="card has-shot" href="ai-prompt-cheatsheet.html">
+        <a id="card-cheatsheet" class="card has-shot" href="ai-prompt-cheatsheet.html">
           <div class="shot"><img src="img/shots/cheatsheet.jpg" alt="Prompt Engineering Cheat Sheet, with filter tabs and technique cards showing example prompts" width="800" height="500" loading="lazy"></div>
           <div class="body">
             <div class="title-row"><span class="ico"><i data-lucide="library"></i></span><h3>Prompt Engineering Cheat Sheet</h3></div>
@@ -358,7 +385,7 @@
         <p>Small things built mostly for the fun of it.</p>
       </div>
       <div class="grid two">
-        <a class="card has-shot" href="games/find-fred/index.html">
+        <a id="card-fred" class="card has-shot" href="games/find-fred/index.html">
           <div class="shot"><img src="img/shots/fred.jpg" alt="Find Fred title screen in 80s arcade style, with a pixel-art Fred and a Press Start button" width="800" height="500" loading="lazy"></div>
           <div class="body">
             <div class="title-row"><span class="ico"><i data-lucide="gamepad-2"></i></span><h3>Find Fred</h3></div>
@@ -366,7 +393,7 @@
             <div class="meta"><span class="tag">Arcade</span><span class="go">↗</span></div>
           </div>
         </a>
-        <a class="card has-shot" href="games/ai-memory-game%20v1.html">
+        <a id="card-memory" class="card has-shot" href="games/ai-memory-game%20v1.html">
           <div class="shot"><img src="img/shots/memory.jpg" alt="AI Memory Game board with six face-down purple cards" width="800" height="500" loading="lazy"></div>
           <div class="body">
             <div class="title-row"><span class="ico"><i data-lucide="brain"></i></span><h3>AI Memory Game</h3></div>
@@ -374,6 +401,19 @@
             <div class="meta"><span class="tag">Cards</span><span class="go">↗</span></div>
           </div>
         </a>
+      </div>
+    </section>
+
+    <section class="container section" id="path">
+      <div class="section-head">
+        <p class="eyebrow">Path to production</p>
+        <h2>How ideas reach production</h2>
+        <p>Every project here follows a thread: a folder on my laptop, then source control, a build step (sometimes none), a host, and finally a URL you can open.</p>
+      </div>
+      <div class="path-wrap">
+        <p class="path-count"><b id="path-total">6</b> shipped</p>
+        <svg id="path-svg" viewBox="0 0 940 400" role="group" aria-label="Each project's path from local folder to live site"></svg>
+        <p class="path-hint">Hover or focus a thread to isolate it. Click to jump to its card.</p>
       </div>
     </section>
 
@@ -401,6 +441,86 @@
 
   <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
   <script>lucide.createIcons();</script>
+
+  <script>
+    (() => {
+      const stages = ["Folder on disk", "Source control", "Build", "Host", "Live"];
+      const projects = [
+        { id: "icebreaker", color: "#6366f1", live: "Icebreaker Map",  path: ["~/code/icebreaker-map", "jneill33/icebreaker-map", "Node + Express", "Render"] },
+        { id: "fred",       color: "#ec4899", live: "Find Fred",       path: ["~/code/find-fred", "stationsix/portfolio", "None (static)", "GitHub Pages"] },
+        { id: "timeline",   color: "#8b5cf6", live: "AI History",      path: ["Local folder", "stationsix/portfolio", "None (static)", "GitHub Pages"] },
+        { id: "era",        color: "#0ea5e9", live: "AI Era Journey",  path: ["Local folder", "stationsix/portfolio", "None (static)", "GitHub Pages"] },
+        { id: "cheatsheet", color: "#14b8a6", live: "Prompt Cheatsheet", path: ["Local folder", "stationsix/portfolio", "None (static)", "GitHub Pages"] },
+        { id: "memory",     color: "#f59e0b", live: "AI Memory Game",  path: ["Local folder", "stationsix/portfolio", "None (static)", "GitHub Pages"] }
+      ];
+      const NS = "http://www.w3.org/2000/svg", svg = document.getElementById("path-svg");
+      const W = 940, top = 64, gap = 54, xs = stages.map((_, i) => 100 + i * 185);
+      const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); (p || svg).appendChild(e); return e; };
+
+      document.getElementById("path-total").textContent = projects.length;
+      // Full route per project, including the live endpoint as the last stage.
+      projects.forEach(p => { p.route = [...p.path, p.live]; });
+
+      // A node is a (stage, label) pair; shared nodes sit at the mean row of the projects using them.
+      const nodes = {};
+      projects.forEach((p, row) => p.route.forEach((label, s) => {
+        const n = nodes[s + "|" + label] ||= { s, label, rows: [] };
+        n.rows.push(row);
+      }));
+      Object.values(nodes).forEach(n => { n.x = xs[n.s]; n.y = top + gap * (n.rows.reduce((a, b) => a + b) / n.rows.length); });
+
+      stages.forEach((name, i) => el("text", { x: xs[i], y: 24, "text-anchor": "middle", class: "stage-label" }).textContent = name);
+
+      const groups = projects.map(p => {
+        const g = el("g", { "data-id": p.id });
+        const pts = p.route.map((l, s) => nodes[s + "|" + l]);
+        // Fan threads out a few px inside shared nodes so they stay individually visible.
+        const ys = pts.map(n => n.y + (n.rows.indexOf(projects.indexOf(p)) - (n.rows.length - 1) / 2) * 5);
+        let d = "M" + pts[0].x + " " + ys[0];
+        for (let i = 1; i < pts.length; i++) {
+          const a = pts[i - 1], b = pts[i], mx = (a.x + b.x) / 2;
+          d += " C" + mx + " " + ys[i - 1] + " " + mx + " " + ys[i] + " " + b.x + " " + ys[i];
+        }
+        el("path", { d, class: "thread", stroke: p.color }, g);
+        const hit = el("path", { d, class: "hit", tabindex: 0, role: "link", "aria-label": p.live + ": " + p.route.join(" to ") }, g);
+        p.g = g; p.hit = hit; p.nodes = pts;
+        return g;
+      });
+
+      // Node dots and labels are drawn on top of the threads.
+      Object.values(nodes).forEach(n => {
+        const members = projects.filter(p => p.nodes.includes(n));
+        const last = n.s === stages.length - 1;
+        const g = el("g");
+        members.forEach(p => { p.dots = (p.dots || []).concat(g); });
+        el("circle", { cx: n.x, cy: n.y, r: last ? 6 : 5, fill: members.length === 1 ? members[0].color : "#4b5170", class: "dot" }, g);
+        el("text", { x: n.x, y: n.y - 12 - (n.rows.length - 1) * 2.5, "text-anchor": "middle", class: last ? "live-label" : "node-label" }, g).textContent = n.label;
+      });
+
+      const set = id => {
+        svg.classList.toggle("has-active", !!id);
+        projects.forEach(p => {
+          const on = p.id === id;
+          p.g.classList.toggle("dim", !!id && !on);
+          p.g.classList.toggle("on", on);
+          p.dots.forEach(d => d.classList.toggle("dim", !!id && !on && !projects.some(q => q.id === id && q.dots.includes(d))));
+        });
+      };
+      const go = p => {
+        const c = document.getElementById("card-" + p.id);
+        c.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+        c.classList.remove("flash"); void c.offsetWidth; c.classList.add("flash");
+      };
+      projects.forEach(p => {
+        p.hit.addEventListener("mouseenter", () => set(p.id));
+        p.hit.addEventListener("focus", () => set(p.id));
+        p.hit.addEventListener("mouseleave", () => set(null));
+        p.hit.addEventListener("blur", () => set(null));
+        p.hit.addEventListener("click", () => go(p));
+        p.hit.addEventListener("keydown", e => { if (e.key === "Enter") go(p); });
+      });
+    })();
+  </script>
 
 </body>
 </html>
