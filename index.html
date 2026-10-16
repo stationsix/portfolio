@@ -430,11 +430,12 @@
       <div class="section-head">
         <p class="eyebrow">Path to production</p>
         <h2>How ideas reach production</h2>
-        <p>Every project here follows a thread: which AI tool it started in, where I worked on it, then source control, a build step (sometimes none), a host, and finally a URL you can open.</p>
+        <p>Every project here follows a thread: which AI tool it started in, where I worked on it, where the code lives, what builds it (sometimes nothing), where it's hosted, and finally a URL you can open.</p>
+        <p>These days every change goes through a pull request, and I check it on a local preview before it merges. StationSixADV goes a step further: GitHub Actions builds it with Eleventy, and Azure spins up a preview copy of the site for each pull request before the merge to main publishes it to Azure Static Web Apps, with the stationsixadv.com domain run through Cloudflare.</p>
       </div>
       <div class="path-wrap">
         <p class="path-count"><b id="path-total">6</b> shipped</p>
-        <svg id="path-svg" viewBox="0 0 940 400" role="group" aria-label="Each project's path from local folder to live site"></svg>
+        <svg id="path-svg" viewBox="0 0 940 410" role="group" aria-label="Each project's path from the AI tool it started in to its live site"></svg>
         <p class="path-hint">Hover or focus a thread to isolate it. Click to jump to its card.</p>
       </div>
     </section>
@@ -446,7 +447,7 @@
       </div>
       <div class="grid bench">
         <div class="card"><p class="eyebrow">Building with</p><p class="tools">Claude&nbsp;Code, Codex, VS&nbsp;Code, GitHub</p></div>
-        <div class="card"><p class="eyebrow">Made from</p><p class="tools">React, Flask, Leaflet</p></div>
+        <div class="card"><p class="eyebrow">Made from</p><p class="tools">React, Flask, Leaflet, Eleventy</p></div>
         <div class="card"><p class="eyebrow">Hosted on</p><p class="tools">GitHub&nbsp;Pages, Render, Azure&nbsp;Static&nbsp;Web&nbsp;Apps</p></div>
         <div class="card"><p class="eyebrow">Automating with</p><p class="tools">Make</p><p class="aside">n8n is on my radar.</p></div>
       </div>
@@ -469,6 +470,7 @@
       const stages = ["Started in", "Workspace", "Source control", "Build", "Host", "Live"];
       const projects = [
         { id: "icebreaker", color: "#6366f1", live: "Icebreaker Map",  path: ["Claude", "Terminal", "GitHub (public)", "Node + Express", "Render"] },
+        { id: "stationsixadv", color: "#dc5a32", live: "StationSixADV", path: ["Claude", "Terminal", "GitHub (public)", "Eleventy + Actions", "Azure Static Web Apps"] },
         { id: "fred",       color: "#ec4899", live: "Find Fred",       path: ["Claude", "Terminal", "GitHub (public)", "None (static)", "GitHub Pages"] },
         { id: "timeline",   color: "#8b5cf6", live: "AI History",      path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] },
         { id: "era",        color: "#0ea5e9", live: "AI Era Journey",  path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] },
