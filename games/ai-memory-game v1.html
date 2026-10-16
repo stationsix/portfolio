@@ -85,349 +85,694 @@
       </svg>
     );
 
+    const Clock = ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    );
+
+    const Star = ({ className, filled }) => (
+      <svg className={className} viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    );
+
+    const Stars = ({ count, className = "w-4 h-4" }) => (
+      <span className="inline-flex gap-0.5" aria-label={`${count} of 3 stars`}>
+        {[1, 2, 3].map(n => (
+          <Star key={n} filled={n <= count} className={`${className} ${n <= count ? 'text-yellow-400' : 'text-white/25'}`} />
+        ))}
+      </span>
+    );
+
+    // Each level holds a bigger pool than it needs; every round draws `pairs` concepts at random.
+    const levels = {
+      1: {
+        name: "Foundations",
+        pairs: 3,
+        gridCols: 3,
+        concepts: [
+          {
+            id: 1,
+            icon: "🧠",
+            term: "Neural Network",
+            definition: "Computing systems inspired by biological neural networks",
+            fact: "In 1943, Warren McCulloch and Walter Pitts published a mathematical model of a neuron, showing that networks of simple on/off units could compute logic. Every neural network since builds on that idea."
+          },
+          {
+            id: 2,
+            icon: "📊",
+            term: "Training Data",
+            definition: "Information used to teach AI models patterns and relationships",
+            fact: "GPT-3's training began with about 45TB of raw web text, filtered down to roughly 570GB of higher-quality data. Even that is more than any person could read in many lifetimes."
+          },
+          {
+            id: 3,
+            icon: "🔤",
+            term: "Tokens",
+            definition: "Basic units of text that AI models process",
+            fact: "In English, one token is roughly 4 characters or about three-quarters of a word. Models read, write and are billed in tokens, not words."
+          },
+          {
+            id: 4,
+            icon: "📈",
+            term: "Machine Learning",
+            definition: "Systems that learn patterns from data instead of following hand-written rules",
+            fact: "Arthur Samuel coined the term 'machine learning' in 1959 while building a checkers program at IBM that improved by playing thousands of games against itself."
+          },
+          {
+            id: 5,
+            icon: "🎛️",
+            term: "Parameters",
+            definition: "The adjustable numbers a model learns during training",
+            fact: "Parameters are the knobs a model tunes as it learns. GPT-2 (2019) had 1.5 billion; GPT-3 (2020) had 175 billion, a jump of more than 100x in a single year."
+          },
+          {
+            id: 6,
+            icon: "💡",
+            term: "Inference",
+            definition: "Using a trained model to make predictions or generate output",
+            fact: "Training happens once, but inference happens every time someone asks a question. For popular AI products, the compute spent answering users can rival what was spent on training."
+          }
+        ]
+      },
+      2: {
+        name: "Pioneers",
+        pairs: 4,
+        gridCols: 4,
+        concepts: [
+          {
+            id: 7,
+            icon: "🎯",
+            term: "Alan Turing",
+            definition: "Father of computer science who proposed the Turing Test",
+            fact: "In 1950, Turing asked 'Can machines think?' His Turing Test proposed that if a machine can hold a conversation indistinguishable from a human's, it demonstrates intelligence."
+          },
+          {
+            id: 8,
+            icon: "🤖",
+            term: "John McCarthy",
+            definition: "Coined the term 'Artificial Intelligence' in 1956",
+            fact: "McCarthy organized the 1956 Dartmouth workshop, widely considered the birth of AI as a field. Its organizers expected major progress over a single summer, an early reminder that AI progress is hard to forecast."
+          },
+          {
+            id: 9,
+            icon: "🔮",
+            term: "Marvin Minsky",
+            definition: "Pioneer of AI and co-founder of MIT's AI Lab",
+            fact: "Minsky built SNARC, one of the first neural network machines, in 1951. His 1969 book Perceptrons, written with Seymour Papert, highlighted the limits of simple networks and helped cool interest in them for over a decade."
+          },
+          {
+            id: 10,
+            icon: "⚡",
+            term: "Geoffrey Hinton",
+            definition: "Godfather of Deep Learning and backpropagation pioneer",
+            fact: "With students Alex Krizhevsky and Ilya Sutskever, Hinton built AlexNet in 2012, which won the ImageNet challenge by a wide margin and kicked off the deep learning boom. In 2024 he shared the Nobel Prize in Physics with John Hopfield."
+          },
+          {
+            id: 11,
+            icon: "🖼️",
+            term: "Fei-Fei Li",
+            definition: "Created ImageNet, the dataset behind the deep learning boom",
+            fact: "ImageNet held over 14 million labelled images, many tagged by crowd workers on Amazon Mechanical Turk. Its annual challenge became the proving ground where AlexNet made deep learning famous."
+          },
+          {
+            id: 12,
+            icon: "👁️",
+            term: "Yann LeCun",
+            definition: "Pioneer of convolutional neural networks",
+            fact: "LeCun's convolutional networks learned to read handwritten digits, and by the late 1990s they were processing a large share of cheques in the US. He shared the 2018 Turing Award with Geoffrey Hinton and Yoshua Bengio."
+          },
+          {
+            id: 13,
+            icon: "🔌",
+            term: "Frank Rosenblatt",
+            definition: "Invented the perceptron, an early learning machine",
+            fact: "When Rosenblatt unveiled the perceptron in 1958, the New York Times reported the Navy expected it to one day walk, talk, see and be conscious of its existence. It was an early case of AI hype running ahead of reality."
+          },
+          {
+            id: 14,
+            icon: "🧪",
+            term: "Demis Hassabis",
+            definition: "Co-founder of DeepMind, behind AlphaGo and AlphaFold",
+            fact: "AlphaFold predicted the 3D structures of over 200 million proteins, a problem biologists had worked on for 50 years. Hassabis and John Jumper shared the 2024 Nobel Prize in Chemistry for it."
+          }
+        ]
+      },
+      3: {
+        name: "Architecture",
+        pairs: 6,
+        gridCols: 4,
+        concepts: [
+          {
+            id: 15,
+            icon: "🔄",
+            term: "Transformer",
+            definition: "Architecture using attention mechanisms to process sequences",
+            fact: "Introduced in Google's 2017 paper 'Attention Is All You Need', transformers process a whole sequence at once rather than word by word like earlier models. Nearly every modern LLM is built on them."
+          },
+          {
+            id: 16,
+            icon: "🎭",
+            term: "Attention Mechanism",
+            definition: "Allows models to focus on relevant parts of input",
+            fact: "Attention works like highlighting key words in a document. In 'The cat sat on the mat', attention helps the model connect 'cat' with 'sat', even when related words are far apart."
+          },
+          {
+            id: 17,
+            icon: "📝",
+            term: "Large Language Model",
+            definition: "AI trained on massive text datasets to understand language",
+            fact: "The 'large' is literal. GPT-3 had 175 billion parameters, and today's frontier models are widely believed to be far larger, though most labs no longer publish exact sizes."
+          },
+          {
+            id: 18,
+            icon: "🎨",
+            term: "Diffusion Model",
+            definition: "Generates images by learning to reverse noise addition",
+            fact: "Diffusion models like Stable Diffusion and DALL-E 2 work backwards from noise. They learn to remove noise step by step, like watching a photograph develop from static."
+          },
+          {
+            id: 19,
+            icon: "🔢",
+            term: "Embedding",
+            definition: "Numerical representation of data in high-dimensional space",
+            fact: "Word embeddings capture meaning mathematically. In embedding space, 'king' - 'man' + 'woman' lands close to 'queen', showing how AI learns abstract relationships."
+          },
+          {
+            id: 20,
+            icon: "🧩",
+            term: "Fine-Tuning",
+            definition: "Adapting pre-trained models for specific tasks",
+            fact: "Fine-tuning is like specialized training after a general education. A model trained on general text can be fine-tuned on medical literature to become a medical assistant in hours, not years."
+          },
+          {
+            id: 21,
+            icon: "🔲",
+            term: "CNN",
+            definition: "Convolutional network that scans images with small filters",
+            fact: "CNNs learn a hierarchy: early layers detect edges, middle layers pick out textures and shapes, and later layers recognize whole objects like faces or cars."
+          },
+          {
+            id: 22,
+            icon: "⛓️",
+            term: "LSTM",
+            definition: "Recurrent network with memory gates for handling sequences",
+            fact: "Invented by Sepp Hochreiter and Jürgen Schmidhuber in 1997, LSTMs powered Google Translate and smartphone speech recognition in the mid-2010s, until transformers took over."
+          },
+          {
+            id: 23,
+            icon: "🔀",
+            term: "Mixture of Experts",
+            definition: "Routes each input to a few specialist sub-networks",
+            fact: "MoE models hold huge numbers of parameters but use only a fraction for each token. DeepSeek-V3 has 671 billion parameters yet activates about 37 billion per token, saving a lot of compute."
+          },
+          {
+            id: 24,
+            icon: "⚔️",
+            term: "GAN",
+            definition: "Two networks competing: one generates, one judges",
+            fact: "Ian Goodfellow came up with GANs in 2014 after a discussion at a Montreal bar, then coded the first version that night. GANs powered the first wave of realistic AI-generated faces."
+          }
+        ]
+      },
+      4: {
+        name: "Modern Techniques",
+        pairs: 8,
+        gridCols: 4,
+        concepts: [
+          {
+            id: 25,
+            icon: "💬",
+            term: "Prompt Engineering",
+            definition: "Crafting inputs to optimize AI model responses",
+            fact: "Small wording changes can matter a lot. In a 2022 study, adding 'Let's think step by step' raised a model's accuracy on a math word-problem benchmark from about 18% to 79%."
+          },
+          {
+            id: 26,
+            icon: "🎓",
+            term: "Few-Shot Learning",
+            definition: "Learning from just a few examples rather than thousands",
+            fact: "Humans are natural few-shot learners: see one dog and you can spot others. GPT-3 showed large models can pick up a new task from just 2 or 3 examples in the prompt."
+          },
+          {
+            id: 27,
+            icon: "🔍",
+            term: "RAG",
+            definition: "Retrieval-Augmented Generation: combining search with generation",
+            fact: "RAG lets AI use external knowledge without retraining. The system searches current documents and feeds what it finds to the model, working around the knowledge cutoff problem."
+          },
+          {
+            id: 28,
+            icon: "👥",
+            term: "RLHF",
+            definition: "Reinforcement Learning from Human Feedback",
+            fact: "RLHF is how ChatGPT learned to be helpful. People rate thousands of responses, teaching the model which outputs are preferred, like training a dog with treats, but for language."
+          },
+          {
+            id: 29,
+            icon: "🎯",
+            term: "Zero-Shot Learning",
+            definition: "Performing tasks without any training examples",
+            fact: "Large models handle tasks they were never explicitly trained on. Ask one to 'translate this into Klingon' or 'write like Shakespeare' and it usually just works, an example of emergent abilities."
+          },
+          {
+            id: 30,
+            icon: "🌡️",
+            term: "Temperature",
+            definition: "Parameter controlling randomness in AI outputs",
+            fact: "Temperature works like a creativity dial. At 0, the model almost always picks the most likely word (predictable). Higher values take more creative risks. Many apps default to somewhere between 0.7 and 1."
+          },
+          {
+            id: 31,
+            icon: "🎪",
+            term: "Hallucination",
+            definition: "When AI generates false but plausible-sounding information",
+            fact: "LLMs predict plausible text; they don't check it against the truth. In 2023, lawyers in a New York case were fined after citing court decisions that ChatGPT had invented."
+          },
+          {
+            id: 32,
+            icon: "🔐",
+            term: "Alignment",
+            definition: "Ensuring AI systems act according to human values",
+            fact: "The alignment problem asks how we make sure highly capable AI does what we actually want. It's harder than it sounds: even defining 'human values' across cultures is an unsolved challenge."
+          },
+          {
+            id: 33,
+            icon: "🗜️",
+            term: "Quantization",
+            definition: "Storing model weights at lower precision to save memory",
+            fact: "Storing weights as 4-bit numbers instead of 16-bit cuts memory roughly 4x. It's how people run capable open models on a laptop, usually with only a small drop in quality."
+          },
+          {
+            id: 34,
+            icon: "⚗️",
+            term: "Distillation",
+            definition: "Training a small model to imitate a larger one",
+            fact: "Distillation lets a compact 'student' model learn from a big 'teacher'. Many fast, cheap models are distilled from larger ones, keeping much of the skill at a fraction of the cost."
+          },
+          {
+            id: 35,
+            icon: "📜",
+            term: "Constitutional AI",
+            definition: "Training AI to critique itself against written principles",
+            fact: "Anthropic introduced Constitutional AI in 2022. Instead of relying only on human ratings, the model critiques and revises its own answers using a written set of principles: its 'constitution'."
+          },
+          {
+            id: 36,
+            icon: "🗄️",
+            term: "Vector Database",
+            definition: "Database that searches by meaning using embeddings",
+            fact: "Vector databases find text that means something similar, not just matching keywords. Search 'puppy training' and you can get a document about teaching your dog to sit. They're the memory behind most RAG systems."
+          }
+        ]
+      },
+      5: {
+        name: "Cutting Edge",
+        pairs: 10,
+        gridCols: 5,
+        concepts: [
+          {
+            id: 37,
+            icon: "🤖",
+            term: "Multimodal AI",
+            definition: "Models that process multiple types of data (text, image, audio)",
+            fact: "Models like GPT-4o, Gemini and Claude can read images, charts and screenshots, and some can listen and talk back in real time, bridging language, vision and sound."
+          },
+          {
+            id: 38,
+            icon: "🧰",
+            term: "Tool Use",
+            definition: "AI models calling external functions and APIs",
+            fact: "Modern AI can use calculators, search engines and APIs. Instead of guessing that 357 × 842 = 299,974, a model can call a calculator tool and return the correct answer: 300,594."
+          },
+          {
+            id: 39,
+            icon: "🎬",
+            term: "Chain-of-Thought",
+            definition: "Showing reasoning steps before providing answers",
+            fact: "Asking AI to 'think step by step' triggers chain-of-thought reasoning, which dramatically improves complex problem-solving. It's like showing your work in math class: mistakes become easier to catch."
+          },
+          {
+            id: 40,
+            icon: "🏗️",
+            term: "Agent",
+            definition: "AI that can plan, use tools, and complete multi-step tasks",
+            fact: "Agents shift AI from answering questions to completing tasks. An agent might search the web, write code, run it, fix the errors and summarize what it found, all on its own."
+          },
+          {
+            id: 41,
+            icon: "💾",
+            term: "Context Window",
+            definition: "Amount of text an AI can process at once",
+            fact: "The original GPT-3 could handle 2,048 tokens, a few pages. Gemini 1.5 Pro reached 1 million tokens in 2024, and million-token windows are now common among frontier models: enough for an entire codebase at once."
+          },
+          {
+            id: 42,
+            icon: "⚙️",
+            term: "MCP",
+            definition: "Model Context Protocol: a standard for connecting AI to tools and data",
+            fact: "MCP is like USB-C for AI: one standard way to plug models into tools and data. Anthropic open-sourced it in November 2024, and within months OpenAI, Google and Microsoft had adopted it too."
+          },
+          {
+            id: 43,
+            icon: "🎨",
+            term: "LoRA",
+            definition: "Low-Rank Adaptation: an efficient fine-tuning method",
+            fact: "LoRA trains small add-on matrices instead of the whole model. In the original paper it cut trainable parameters for GPT-3 by up to 10,000x and GPU memory by about 3x, putting custom fine-tunes within reach of a single GPU."
+          },
+          {
+            id: 44,
+            icon: "🧬",
+            term: "Synthetic Data",
+            definition: "AI-generated training data for other AI models",
+            fact: "Big models can generate training data for smaller ones. But researchers found that models trained repeatedly on their own outputs can degrade, a problem called 'model collapse', like photocopies of photocopies."
+          },
+          {
+            id: 45,
+            icon: "🌍",
+            term: "Open-Weight AI",
+            definition: "AI models whose trained weights are publicly released",
+            fact: "Open models closed the gap fast. In January 2025, DeepSeek's open-weight R1 rivalled top reasoning models at a fraction of the reported cost, and in August 2025 OpenAI released its first open-weight models since GPT-2."
+          },
+          {
+            id: 46,
+            icon: "🚀",
+            term: "AGI",
+            definition: "Artificial General Intelligence: human-level AI across all tasks",
+            fact: "AGI has no agreed definition, and predictions vary wildly. Some AI lab leaders say it could arrive within a few years; skeptics argue today's models still lack reliable reasoning. Either way, it's one of the biggest questions in technology."
+          },
+          {
+            id: 47,
+            icon: "🛡️",
+            term: "Red Teaming",
+            definition: "Deliberately attacking AI systems to find weaknesses",
+            fact: "Before release, labs bring in experts to try to make models misbehave, from leaking secrets to giving dangerous advice. The term comes from military exercises where a 'red team' played the enemy."
+          },
+          {
+            id: 48,
+            icon: "📏",
+            term: "Benchmark",
+            definition: "Standardized test used to compare AI models",
+            fact: "Benchmarks saturate fast. Tests designed to stay hard for years are often beaten within one or two, which is why researchers keep building tougher ones like 'Humanity's Last Exam' (2025)."
+          },
+          {
+            id: 49,
+            icon: "🐣",
+            term: "Small Language Model",
+            definition: "Compact model that runs on phones and laptops",
+            fact: "Not every task needs a giant model. Small models with a few billion parameters can run directly on a phone, keeping data private and working offline."
+          }
+        ]
+      },
+      6: {
+        name: "Frontier (2025–26)",
+        pairs: 10,
+        gridCols: 5,
+        concepts: [
+          {
+            id: 50,
+            icon: "🤔",
+            term: "Reasoning Model",
+            definition: "Model trained to think through problems before answering",
+            fact: "OpenAI's o1 (September 2024) popularized models that 'think' before answering. In January 2025, DeepSeek-R1 showed similar reasoning could be trained largely with reinforcement learning, and its open release briefly rattled tech stocks."
+          },
+          {
+            id: 51,
+            icon: "⏱️",
+            term: "Test-Time Compute",
+            definition: "Spending more compute while answering to get better results",
+            fact: "Scaling used to mean bigger models and more training. Reasoning models added a new dial: let the model think longer on hard questions, and accuracy keeps climbing."
+          },
+          {
+            id: 52,
+            icon: "🖱️",
+            term: "Computer Use",
+            definition: "AI that operates a computer by seeing the screen and clicking",
+            fact: "In October 2024, Anthropic gave Claude the ability to look at screenshots, move the cursor and type. Agents can now work through apps built for humans, no API required."
+          },
+          {
+            id: 53,
+            icon: "👨‍💻",
+            term: "Agentic Coding",
+            definition: "AI agents that write, run and fix code across a whole project",
+            fact: "Tools like Claude Code, OpenAI Codex and GitHub Copilot's coding agent can read a codebase, edit many files, run the tests and open a pull request, work that once needed a developer at every step."
+          },
+          {
+            id: 54,
+            icon: "🎶",
+            term: "Vibe Coding",
+            definition: "Building software by describing it and trusting the AI's code",
+            fact: "Andrej Karpathy coined 'vibe coding' in February 2025 for building software by talking to AI and barely reading the code. By the end of the year, Collins Dictionary had named it Word of the Year."
+          },
+          {
+            id: 55,
+            icon: "📚",
+            term: "Deep Research",
+            definition: "Agents that search, read and write cited reports for you",
+            fact: "Launched by Google (December 2024) and OpenAI (February 2025), deep research agents spend minutes browsing dozens of sources and return a cited report, compressing hours of desk research."
+          },
+          {
+            id: 56,
+            icon: "🧾",
+            term: "Context Engineering",
+            definition: "Designing everything a model sees, not just the prompt",
+            fact: "As agents ran longer, builders realized the prompt was only part of the story. Context engineering covers everything in the window, from instructions and tools to retrieved documents and memory, and what gets left out."
+          },
+          {
+            id: 57,
+            icon: "🛠️",
+            term: "Agent Skills",
+            definition: "Packaged instructions and scripts an agent loads when needed",
+            fact: "Introduced by Anthropic in October 2025, Skills are folders of instructions and files that Claude loads only when a task calls for them, like giving an agent a shelf of how-to manuals."
+          },
+          {
+            id: 58,
+            icon: "🥇",
+            term: "IMO Gold",
+            definition: "AI matching top students at the International Math Olympiad",
+            fact: "In July 2025, experimental models from Google DeepMind and OpenAI both reached gold-medal level at the International Mathematical Olympiad, writing full natural-language proofs within the contest's time limits."
+          },
+          {
+            id: 59,
+            icon: "🤝",
+            term: "A2A",
+            definition: "Agent2Agent: a protocol for AI agents to work together",
+            fact: "Google introduced A2A in April 2025 so agents from different vendors could discover each other and hand off tasks. Where MCP connects an agent to tools, A2A connects agents to other agents."
+          },
+          {
+            id: 60,
+            icon: "🔬",
+            term: "Interpretability",
+            definition: "Studying what is happening inside a model's network",
+            fact: "In 2025, Anthropic researchers traced how Claude plans ahead when writing rhyming poetry, choosing the rhyme word before writing the line. Interpretability aims to make AI less of a black box."
+          },
+          {
+            id: 61,
+            icon: "⚖️",
+            term: "EU AI Act",
+            definition: "The first broad law regulating AI across a major economy",
+            fact: "The EU AI Act came into force in August 2024 and phases in over several years. It sorts AI by risk: some uses, like social scoring, are banned outright, and rules for general-purpose models began applying in August 2025."
+          },
+          {
+            id: 62,
+            icon: "🌐",
+            term: "Agentic Browser",
+            definition: "Web browser with a built-in AI agent that acts on pages",
+            fact: "In 2025, AI browsers like Perplexity's Comet and OpenAI's ChatGPT Atlas arrived, able to shop, book and fill in forms for you. They also brought new security worries, like prompt injections hidden in web pages."
+          }
+        ]
+      }
+    };
+
+    const LEVEL_COUNT = Object.keys(levels).length;
+    const STORAGE_KEY = "aiMemoryGame.best.v1";
+
+    const shuffle = (items) => {
+      const a = [...items];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    };
+
+    // A perfect game takes exactly `pairs` moves.
+    const starsFor = (moves, pairs) => {
+      if (moves <= Math.ceil(pairs * 1.5)) return 3;
+      if (moves <= Math.ceil(pairs * 2.25)) return 2;
+      return 1;
+    };
+
+    const formatTime = (seconds) => {
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      return `${m}:${String(s).padStart(2, '0')}`;
+    };
+
+    const loadBest = () => {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      } catch (e) {
+        return {};
+      }
+    };
+
+    const saveBest = (best) => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(best));
+      } catch (e) {
+        // Storage can be unavailable (private mode); scores just won't persist.
+      }
+    };
+
+    const useIsNarrow = () => {
+      const query = '(max-width: 639px)';
+      const [narrow, setNarrow] = useState(() => window.matchMedia(query).matches);
+      useEffect(() => {
+        const mql = window.matchMedia(query);
+        const onChange = (e) => setNarrow(e.matches);
+        mql.addEventListener('change', onChange);
+        return () => mql.removeEventListener('change', onChange);
+      }, []);
+      return narrow;
+    };
 
     const AIMemoryGame = () => {
       const [level, setLevel] = useState(1);
+      const [round, setRound] = useState(0);
       const [cards, setCards] = useState([]);
       const [flippedCards, setFlippedCards] = useState([]);
       const [matchedPairs, setMatchedPairs] = useState([]);
       const [moves, setMoves] = useState(0);
       const [showFact, setShowFact] = useState(null);
       const [gameComplete, setGameComplete] = useState(false);
+      const [startedAt, setStartedAt] = useState(null);
+      const [elapsed, setElapsed] = useState(0);
+      const [best, setBest] = useState(loadBest);
+      const [newBest, setNewBest] = useState(false);
+      const [announcement, setAnnouncement] = useState('');
+      const isNarrow = useIsNarrow();
 
-      const levels = {
-        1: {
-          name: "Foundations",
-          pairs: 3,
-          gridCols: 3,
-          gridRows: 2,
-          concepts: [
-            {
-              id: 1,
-              icon: "🧠",
-              term: "Neural Network",
-              definition: "Computing systems inspired by biological neural networks",
-              fact: "The first artificial neural network was created in 1943 by Warren McCulloch and Walter Pitts, using electrical circuits to model simple brain functions."
-            },
-            {
-              id: 2,
-              icon: "📊",
-              term: "Training Data",
-              definition: "Information used to teach AI models patterns and relationships",
-              fact: "GPT-3 was trained on 45TB of text data, equivalent to roughly 500 billion words - more text than any human could read in multiple lifetimes."
-            },
-            {
-              id: 3,
-              icon: "🔤",
-              term: "Tokens",
-              definition: "Basic units of text that AI models process",
-              fact: "In GPT models, one token roughly equals 4 characters or 0.75 words. The sentence 'AI is transforming technology' is about 6 tokens."
-            }
-          ]
-        },
-        2: {
-          name: "Pioneers",
-          pairs: 4,
-          gridCols: 4,
-          gridRows: 2,
-          concepts: [
-            {
-              id: 4,
-              icon: "🎯",
-              term: "Alan Turing",
-              definition: "Father of computer science who proposed the Turing Test",
-              fact: "In 1950, Turing asked 'Can machines think?' His Turing Test proposed that if a machine can engage in conversation indistinguishable from a human, it demonstrates intelligence."
-            },
-            {
-              id: 5,
-              icon: "🤖",
-              term: "John McCarthy",
-              definition: "Coined the term 'Artificial Intelligence' in 1956",
-              fact: "McCarthy organized the Dartmouth Conference in 1956, widely considered the birth of AI as a field. He predicted AI would match human intelligence within a generation - a reminder that AI progress is hard to forecast!"
-            },
-            {
-              id: 6,
-              icon: "🔮",
-              term: "Marvin Minsky",
-              definition: "Pioneer of AI and co-founder of MIT's AI Lab",
-              fact: "Minsky built the first neural network machine in 1951 (SNARC) using 3,000 vacuum tubes. He later became skeptical of neural networks, ironically contributing to the 'AI Winter' of the 1970s."
-            },
-            {
-              id: 7,
-              icon: "⚡",
-              term: "Geoffrey Hinton",
-              definition: "Godfather of Deep Learning and backpropagation pioneer",
-              fact: "Hinton's 2012 AlexNet breakthrough reduced image recognition errors by 40% and sparked the modern deep learning revolution. In 2023, he left Google to warn about AI risks."
-            }
-          ]
-        },
-        3: {
-          name: "Architecture",
-          pairs: 6,
-          gridCols: 4,
-          gridRows: 3,
-          concepts: [
-            {
-              id: 8,
-              icon: "🔄",
-              term: "Transformer",
-              definition: "Architecture using attention mechanisms to process sequences",
-              fact: "Introduced in Google's 2017 'Attention is All You Need' paper, transformers revolutionized AI by processing entire sequences simultaneously rather than word-by-word like previous models."
-            },
-            {
-              id: 9,
-              icon: "🎭",
-              term: "Attention Mechanism",
-              definition: "Allows models to focus on relevant parts of input",
-              fact: "Attention works like highlighting key sentences in a document. When translating 'The cat sat on the mat,' attention helps the model know 'cat' relates to the verb 'sat' even when words are far apart."
-            },
-            {
-              id: 10,
-              icon: "📝",
-              term: "Large Language Model",
-              definition: "AI trained on massive text datasets to understand language",
-              fact: "The 'large' in LLM is no joke: GPT-4 has an estimated 1.76 trillion parameters. If each parameter was a person, you'd have 200 times Earth's population."
-            },
-            {
-              id: 11,
-              icon: "🎨",
-              term: "Diffusion Model",
-              definition: "Generates images by learning to reverse noise addition",
-              fact: "Diffusion models like DALL-E and Stable Diffusion work backwards from noise. They learn to remove noise step-by-step, like watching a photograph develop from static."
-            },
-            {
-              id: 12,
-              icon: "🔢",
-              term: "Embedding",
-              definition: "Numerical representation of data in high-dimensional space",
-              fact: "Word embeddings capture semantic relationships mathematically. In embedding space, 'king' - 'man' + 'woman' actually points close to 'queen' - demonstrating how AI learns abstract relationships."
-            },
-            {
-              id: 13,
-              icon: "🧩",
-              term: "Fine-Tuning",
-              definition: "Adapting pre-trained models for specific tasks",
-              fact: "Fine-tuning is like specialized training after general education. A model trained on general text can be fine-tuned with medical journals to become a medical AI assistant in hours, not years."
-            }
-          ]
-        },
-        4: {
-          name: "Modern Techniques",
-          pairs: 8,
-          gridCols: 4,
-          gridRows: 4,
-          concepts: [
-            {
-              id: 14,
-              icon: "💬",
-              term: "Prompt Engineering",
-              definition: "Crafting inputs to optimize AI model responses",
-              fact: "Strategic prompting can dramatically change outputs. Adding 'Let's think step by step' to math problems improved GPT-3's accuracy from 18% to 79% in one study."
-            },
-            {
-              id: 15,
-              icon: "🎓",
-              term: "Few-Shot Learning",
-              definition: "Learning from just a few examples rather than thousands",
-              fact: "Humans excel at few-shot learning (seeing one dog helps identify all dogs), but it was a major AI breakthrough. GPT-3 can learn new tasks from 2-3 examples in the prompt."
-            },
-            {
-              id: 16,
-              icon: "🔍",
-              term: "RAG",
-              definition: "Retrieval-Augmented Generation - combining search with generation",
-              fact: "RAG lets AI access external knowledge without retraining. When asked about recent events, RAG systems search current data and use it to generate informed responses - solving the knowledge cutoff problem."
-            },
-            {
-              id: 17,
-              icon: "👥",
-              term: "RLHF",
-              definition: "Reinforcement Learning from Human Feedback",
-              fact: "RLHF is how ChatGPT learned to be helpful and harmless. Humans rate thousands of responses, teaching the model which outputs are preferred - like training a dog with treats, but for language."
-            },
-            {
-              id: 18,
-              icon: "🎯",
-              term: "Zero-Shot Learning",
-              definition: "Performing tasks without any training examples",
-              fact: "Large models can handle tasks they've never explicitly trained on. Tell GPT-4 to 'translate this to Klingon' or 'write like Shakespeare' - it just works, demonstrating emergent abilities."
-            },
-            {
-              id: 19,
-              icon: "🌡️",
-              term: "Temperature",
-              definition: "Parameter controlling randomness in AI outputs",
-              fact: "Temperature works like a creativity dial. At 0, AI always picks the most likely word (predictable). At 1+, it takes creative risks (varied but potentially nonsensical). Most chat apps use 0.7."
-            },
-            {
-              id: 20,
-              icon: "🎪",
-              term: "Hallucination",
-              definition: "When AI generates false but plausible-sounding information",
-              fact: "LLMs don't 'know' truth - they predict plausible text. This causes hallucinations: confident assertions of false facts. Early ChatGPT invented legal cases that lawyers embarrassingly cited in court."
-            },
-            {
-              id: 21,
-              icon: "🔐",
-              term: "Alignment",
-              definition: "Ensuring AI systems act according to human values",
-              fact: "The alignment problem: how do we ensure superintelligent AI does what we want? It's harder than it sounds - even defining 'human values' across cultures and contexts is an unsolved philosophical challenge."
-            }
-          ]
-        },
-        5: {
-          name: "Cutting Edge",
-          pairs: 10,
-          gridCols: 5,
-          gridRows: 4,
-          concepts: [
-            {
-              id: 22,
-              icon: "🤖",
-              term: "Multimodal AI",
-              definition: "Models that process multiple types of data (text, image, audio)",
-              fact: "GPT-4V and Gemini can 'see' images, not just read text. They can analyze charts, identify objects, or explain memes - bridging the gap between language and visual understanding."
-            },
-            {
-              id: 23,
-              icon: "🧰",
-              term: "Tool Use",
-              definition: "AI models calling external functions and APIs",
-              fact: "Modern AI can use calculators, search engines, and APIs. Instead of hallucinating '357 × 842 = 299,974,' Claude can call a calculator tool and return the correct answer: 300,594."
-            },
-            {
-              id: 24,
-              icon: "🎬",
-              term: "Chain-of-Thought",
-              definition: "Showing reasoning steps before providing answers",
-              fact: "Asking AI to 'think step by step' activates chain-of-thought reasoning, dramatically improving complex problem-solving. It's like showing your work in math class - makes mistakes easier to catch."
-            },
-            {
-              id: 25,
-              icon: "🏗️",
-              term: "Agent",
-              definition: "AI that can plan, use tools, and complete multi-step tasks",
-              fact: "AI agents represent a shift from question-answering to task-completion. An agent might search the web, write code, run it, debug errors, and summarize findings - all autonomously."
-            },
-            {
-              id: 26,
-              icon: "💾",
-              term: "Context Window",
-              definition: "Amount of text an AI can process at once",
-              fact: "Early GPT-3 had a 4K token window (~3 pages). Claude 3.5 has 200K tokens (~500 pages). Gemini 1.5 Pro can process 1 million tokens - roughly 700,000 words or 1,400 pages!"
-            },
-            {
-              id: 27,
-              icon: "⚙️",
-              term: "MCP",
-              definition: "Model Context Protocol - standard for connecting AI to data",
-              fact: "MCP is like USB for AI - a universal way to connect models to any data source. Instead of building custom integrations for each AI model, MCP lets one connection work across all compatible models."
-            },
-            {
-              id: 28,
-              icon: "🎨",
-              term: "LoRA",
-              definition: "Low-Rank Adaptation - efficient fine-tuning method",
-              fact: "LoRA fine-tunes models using 0.1% of the parameters, making it 10,000x more memory efficient. You can train custom models on consumer GPUs instead of requiring million-dollar server farms."
-            },
-            {
-              id: 29,
-              icon: "🧬",
-              term: "Synthetic Data",
-              definition: "AI-generated training data for other AI models",
-              fact: "AI training AI raises philosophical questions. GPT-4 can generate training data for smaller models. But will future AI trained on AI outputs degrade like photocopies of photocopies?"
-            },
-            {
-              id: 30,
-              icon: "🌍",
-              term: "Open Source AI",
-              definition: "AI models with publicly available weights and code",
-              fact: "Meta's Llama 2 brought powerful open-source AI to everyone. The debate: Does openness accelerate progress and democratize AI, or does it remove safety controls and enable misuse?"
-            },
-            {
-              id: 31,
-              icon: "🚀",
-              term: "AGI",
-              definition: "Artificial General Intelligence - human-level AI across all tasks",
-              fact: "AGI remains theoretical but hotly debated. Sam Altman predicts AGI by 2025-2027. Skeptics note we've barely achieved 'narrow' AI. Either way, it's the most consequential technology question of our time."
-            }
-          ]
-        }
-      };
+      const currentLevel = levels[level];
 
       useEffect(() => {
         initializeLevel();
-      }, [level]);
+      }, [level, round]);
 
       const initializeLevel = () => {
-        const currentLevel = levels[level];
-        const concepts = currentLevel.concepts.slice(0, currentLevel.pairs);
-        
-        // Create pairs and shuffle
+        const concepts = shuffle(currentLevel.concepts).slice(0, currentLevel.pairs);
         const cardPairs = [...concepts, ...concepts].map((concept, index) => ({
           ...concept,
-          uniqueId: `${concept.id}-${index}`,
-          isFlipped: false,
-          isMatched: false
+          uniqueId: `${concept.id}-${index}`
         }));
-        
-        // Shuffle array
-        const shuffled = cardPairs.sort(() => Math.random() - 0.5);
-        setCards(shuffled);
+
+        setCards(shuffle(cardPairs));
         setFlippedCards([]);
         setMatchedPairs([]);
         setMoves(0);
         setShowFact(null);
         setGameComplete(false);
+        setStartedAt(null);
+        setElapsed(0);
+        setNewBest(false);
+        setAnnouncement('');
       };
 
+      // Tick the timer while a level is in progress.
+      useEffect(() => {
+        if (!startedAt || gameComplete) return;
+        const id = setInterval(() => {
+          setElapsed(Math.floor((Date.now() - startedAt) / 1000));
+        }, 250);
+        return () => clearInterval(id);
+      }, [startedAt, gameComplete]);
+
+      // Level complete: stop the clock and record best scores.
+      useEffect(() => {
+        if (cards.length === 0 || matchedPairs.length !== currentLevel.pairs) return;
+
+        const finalTime = Math.floor((Date.now() - startedAt) / 1000);
+        const stars = starsFor(moves, currentLevel.pairs);
+        const prev = best[level];
+        const improved = !prev || moves < prev.moves || finalTime < prev.time || stars > prev.stars;
+        const updated = {
+          ...best,
+          [level]: {
+            moves: prev ? Math.min(prev.moves, moves) : moves,
+            time: prev ? Math.min(prev.time, finalTime) : finalTime,
+            stars: prev ? Math.max(prev.stars, stars) : stars
+          }
+        };
+
+        setElapsed(finalTime);
+        setBest(updated);
+        saveBest(updated);
+        setNewBest(Boolean(prev) && improved);
+        setAnnouncement(`Level complete in ${moves} moves. ${stars} of 3 stars.`);
+        const id = setTimeout(() => setGameComplete(true), 500);
+        return () => clearTimeout(id);
+      }, [matchedPairs]);
+
       const handleCardClick = (clickedCard) => {
-        if (flippedCards.length === 2 || clickedCard.isMatched || 
-            flippedCards.find(card => card.uniqueId === clickedCard.uniqueId)) {
+        if (gameComplete || flippedCards.length === 2 || matchedPairs.includes(clickedCard.id) ||
+            flippedCards.some(card => card.uniqueId === clickedCard.uniqueId)) {
           return;
         }
+
+        if (!startedAt) setStartedAt(Date.now());
 
         const newFlippedCards = [...flippedCards, clickedCard];
         setFlippedCards(newFlippedCards);
 
         if (newFlippedCards.length === 2) {
-          setMoves(moves + 1);
-          
+          setMoves(m => m + 1);
+
           if (newFlippedCards[0].id === newFlippedCards[1].id) {
-            // Match found!
             setTimeout(() => {
-              setMatchedPairs([...matchedPairs, newFlippedCards[0].id]);
-              setShowFact(newFlippedCards[0]);
+              setMatchedPairs(prev => [...prev, clickedCard.id]);
+              setShowFact(clickedCard);
               setFlippedCards([]);
-              
-              // Check if level complete
-              if (matchedPairs.length + 1 === levels[level].pairs) {
-                setTimeout(() => setGameComplete(true), 500);
-              }
+              setAnnouncement(`Match: ${clickedCard.term}.`);
             }, 600);
           } else {
-            // No match
-            setTimeout(() => {
-              setFlippedCards([]);
-            }, 2500);
+            setAnnouncement(`No match: ${newFlippedCards[0].term} and ${clickedCard.term}.`);
+            setTimeout(() => setFlippedCards([]), 1500);
           }
         }
       };
 
-      const nextLevel = () => {
-        if (level < 5) {
-          setLevel(level + 1);
+      const selectLevel = (n) => {
+        if (n === level) {
+          setRound(r => r + 1);
+        } else {
+          setLevel(n);
         }
       };
 
-      const restartGame = () => {
-        setLevel(1);
+      const nextLevel = () => {
+        if (level < LEVEL_COUNT) setLevel(level + 1);
       };
 
-      const currentLevel = levels[level];
-      const isFlipped = (card) => 
-        flippedCards.find(f => f.uniqueId === card.uniqueId) || 
+      const restartLevel = () => setRound(r => r + 1);
+
+      const playAgain = () => {
+        if (level === 1) {
+          setRound(r => r + 1);
+        } else {
+          setLevel(1);
+        }
+      };
+
+      const isFlipped = (card) =>
+        flippedCards.some(f => f.uniqueId === card.uniqueId) ||
         matchedPairs.includes(card.id);
+
+      const cols = isNarrow ? Math.min(currentLevel.gridCols, 4) : currentLevel.gridCols;
+      const cardHeight = isNarrow ? 120 : 180;
+      const finalStars = starsFor(moves, currentLevel.pairs);
+      const levelBest = best[level];
 
       return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 md:p-8">
@@ -440,15 +785,15 @@
                 <span className="text-xs font-semibold tracking-widest uppercase text-indigo-400">Joe Neill</span>
               </div>
             </div>
-            
+
             {/* Header */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <div className="flex items-center justify-center gap-2 mb-4">
-                <Brain className="w-8 h-8 text-purple-400" />
-                <h1 className="text-4xl font-bold text-white">AI Memory Game</h1>
-                <Sparkles className="w-8 h-8 text-purple-400" />
+                <Brain className="w-7 h-7 md:w-8 md:h-8 text-purple-400" />
+                <h1 className="text-3xl md:text-4xl font-bold text-white">AI Memory Game</h1>
+                <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-purple-400" />
               </div>
-              <div className="flex items-center justify-center gap-6 text-white/80">
+              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-white/80">
                 <div className="flex items-center gap-2">
                   <Trophy className="w-5 h-5 text-yellow-400" />
                   <span>Level {level}: {currentLevel.name}</span>
@@ -457,35 +802,74 @@
                   <Zap className="w-5 h-5 text-blue-400" />
                   <span>Moves: {moves}</span>
                 </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-emerald-400" />
+                  <span className="tabular-nums">{formatTime(elapsed)}</span>
+                </div>
                 <button
-                  onClick={restartGame}
-                  className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                  onClick={restartLevel}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400"
                 >
                   <RotateCcw className="w-4 h-4" />
                   <span>Restart</span>
                 </button>
               </div>
+              {levelBest && (
+                <p className="mt-3 text-xs text-white/50">
+                  Best: {levelBest.moves} moves · {formatTime(levelBest.time)}
+                </p>
+              )}
             </div>
 
+            {/* Level Select */}
+            <nav aria-label="Levels" className="flex flex-wrap justify-center gap-2 mb-8">
+              {Object.entries(levels).map(([key, lvl]) => {
+                const n = Number(key);
+                const active = n === level;
+                const record = best[n];
+                return (
+                  <button
+                    key={n}
+                    onClick={() => selectLevel(n)}
+                    aria-current={active ? 'true' : undefined}
+                    className={`flex flex-col items-center px-3 py-2 rounded-lg border text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 ${
+                      active
+                        ? 'bg-purple-600/40 border-purple-400 text-white'
+                        : 'bg-white/5 border-white/10 text-white/70 hover:bg-white/10'
+                    }`}
+                  >
+                    <span className="font-semibold">{n}. {lvl.name}</span>
+                    <span className="mt-1"><Stars count={record ? record.stars : 0} className="w-3 h-3" /></span>
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Screen reader announcements */}
+            <div className="sr-only" aria-live="polite">{announcement}</div>
+
             {/* Game Board */}
-            <div 
-              className="grid gap-3 md:gap-4 mb-6 mx-auto"
+            <div
+              className="grid gap-2 sm:gap-3 md:gap-4 mb-6 mx-auto"
               style={{
-                gridTemplateColumns: `repeat(${currentLevel.gridCols}, minmax(0, 1fr))`,
-                maxWidth: `${currentLevel.gridCols * 180}px`
+                gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+                maxWidth: `${cols * 180}px`
               }}
             >
-              {cards.map((card) => {
+              {cards.map((card, index) => {
                 const cardIsFlipped = isFlipped(card);
                 const cardIsMatched = matchedPairs.includes(card.id);
-                
+
                 return (
-                  <div
+                  <button
                     key={card.uniqueId}
+                    type="button"
                     onClick={() => handleCardClick(card)}
-                    className="relative cursor-pointer group"
+                    aria-label={cardIsFlipped ? `${card.term}${cardIsMatched ? ', matched' : ''}` : `Card ${index + 1}, face down`}
+                    aria-disabled={cardIsMatched}
+                    className="relative cursor-pointer group rounded-xl text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
                     style={{
-                      height: '180px',
+                      height: `${cardHeight}px`,
                       perspective: '1000px'
                     }}
                   >
@@ -501,27 +885,27 @@
                         className="absolute inset-0 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center border-2 border-purple-400/30 group-hover:border-purple-400/60 transition-colors"
                         style={{ backfaceVisibility: 'hidden' }}
                       >
-                        <Brain className="w-12 h-12 text-white/40" />
+                        <Brain className="w-10 h-10 sm:w-12 sm:h-12 text-white/40" />
                       </div>
-                      
+
                       {/* Card Front */}
                       <div
-                        className={`absolute inset-0 rounded-xl border-2 p-3 flex flex-col items-center justify-center text-center ${
-                          cardIsMatched 
-                            ? 'bg-gradient-to-br from-green-500 to-emerald-600 border-green-400' 
+                        className={`absolute inset-0 rounded-xl border-2 p-2 sm:p-3 flex flex-col items-center justify-center text-center ${
+                          cardIsMatched
+                            ? 'bg-gradient-to-br from-green-500 to-emerald-600 border-green-400'
                             : 'bg-gradient-to-br from-slate-800 to-slate-700 border-slate-600'
                         }`}
-                        style={{ 
+                        style={{
                           backfaceVisibility: 'hidden',
                           transform: 'rotateY(180deg)'
                         }}
                       >
-                        <div className="text-4xl mb-2">{card.icon}</div>
-                        <div className="text-white font-bold text-sm mb-1">{card.term}</div>
-                        <div className="text-white/70 text-xs leading-tight">{card.definition}</div>
+                        <div className="text-3xl sm:text-4xl mb-1 sm:mb-2">{card.icon}</div>
+                        <div className="text-white font-bold text-xs sm:text-sm mb-1 leading-tight">{card.term}</div>
+                        <div className="hidden sm:block text-white/70 text-xs leading-tight">{card.definition}</div>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -532,7 +916,8 @@
                 <div className="flex items-start gap-3">
                   <Sparkles className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
                   <div>
-                    <h3 className="text-white font-bold text-lg mb-2">Did You Know?</h3>
+                    <h3 className="text-white font-bold text-lg mb-1">Did You Know?</h3>
+                    <p className="text-white/60 text-sm mb-2">{showFact.icon} {showFact.term}: {showFact.definition}</p>
                     <p className="text-white/90 text-sm leading-relaxed">{showFact.fact}</p>
                   </div>
                 </div>
@@ -549,32 +934,43 @@
             {gameComplete && (
               <div className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-400/30 rounded-xl p-8 text-center animate-fade-in">
                 <Trophy className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-                <h2 className="text-3xl font-bold text-white mb-2">Level Complete! 🎉</h2>
-                <p className="text-white/80 mb-6">
-                  You completed {currentLevel.name} in {moves} moves
+                <h2 className="text-3xl font-bold text-white mb-3">Level Complete! 🎉</h2>
+                <div className="mb-3"><Stars count={finalStars} className="w-8 h-8" /></div>
+                <p className="text-white/80 mb-1">
+                  You completed {currentLevel.name} in {moves} moves and {formatTime(elapsed)}
                 </p>
-                {level < 5 ? (
+                {newBest && <p className="text-yellow-300 font-semibold mb-1">New personal best!</p>}
+                <p className="text-white/50 text-sm mb-6">A perfect game is {currentLevel.pairs} moves.</p>
+                <div className="flex flex-wrap justify-center gap-3">
                   <button
-                    onClick={nextLevel}
-                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg transition-all transform hover:scale-105"
+                    onClick={restartLevel}
+                    className="px-6 py-3 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-lg transition-colors"
                   >
-                    Next Level →
+                    Replay with new cards
                   </button>
-                ) : (
-                  <div>
-                    <p className="text-white/90 mb-4 text-lg">You've mastered all levels! 🚀</p>
+                  {level < LEVEL_COUNT ? (
                     <button
-                      onClick={restartGame}
+                      onClick={nextLevel}
+                      className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg transition-all transform hover:scale-105"
+                    >
+                      Next Level →
+                    </button>
+                  ) : (
+                    <button
+                      onClick={playAgain}
                       className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold rounded-lg transition-all transform hover:scale-105"
                     >
                       Play Again
                     </button>
-                  </div>
+                  )}
+                </div>
+                {level === LEVEL_COUNT && (
+                  <p className="text-white/90 mt-6 text-lg">You've mastered all {LEVEL_COUNT} levels! 🚀</p>
                 )}
               </div>
             )}
           </div>
-          
+
           {/* Footer */}
           <footer className="border-t border-white/8 py-8 text-center mt-16">
             <p className="text-slate-500 text-xs">
