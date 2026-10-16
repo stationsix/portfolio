@@ -230,6 +230,8 @@
     .feature p { flex: none; font-size: 1rem; }
     .feature p + p { margin-top: 10px; }
     .feature .note { font-size: 0.88rem; color: var(--muted); }
+    .feature.plain { box-shadow: var(--shadow); }
+    .feature.plain::before { content: none; }
 
     /* ---------- Workbench ---------- */
     .bench { grid-template-columns: repeat(4, 1fr); }
@@ -290,7 +292,8 @@
       .container, .topbar, .intro, .section, .footer { padding-left: 16px; padding-right: 16px; }
       .grid, .grid.two, .bench { grid-template-columns: 1fr; }
       .feature h3 { font-size: 1.35rem; }
-      .topnav a { padding: 6px 8px; }
+      .topnav { gap: 0; }
+      .topnav a { padding: 6px 7px; font-size: 0.8rem; }
       .intro { padding-top: 32px; }
       .section { padding-top: 32px; padding-bottom: 32px; }
     }
@@ -305,6 +308,7 @@
     <a class="brand" href="#"><span class="mark">JN</span><span>Joe Neill</span></a>
     <nav class="topnav">
       <a href="#path">Path</a>
+      <a href="#sites">Sites</a>
       <a href="#made">Made</a>
       <a href="#play">Play</a>
       <a href="#bench">Workbench</a>
@@ -340,6 +344,24 @@
           <p>Click any pin to read that person's answer. Pins are rounded to the city, ZIP codes are thrown away once they're used, and every session clears itself after 12 hours.</p>
           <p class="note">(It runs on a free host, so the first load can take a few seconds to wake up.)</p>
           <div class="meta"><span class="tag">Open the app</span><span class="go">↗</span></div>
+        </div>
+      </a>
+    </section>
+
+    <section class="container section" id="sites">
+      <div class="section-head">
+        <p class="eyebrow">Sites</p>
+        <h2>Websites</h2>
+        <p>Real sites with their own domains, built the same way as everything else here.</p>
+      </div>
+      <a id="card-stationsixadv" class="card has-shot feature plain" href="https://stationsixadv.com" target="_blank" rel="noopener">
+        <div class="shot"><img src="img/shots/stationsixadv.jpg" alt="StationSixADV journal homepage in dark mode, with the Why I Ride entry" width="800" height="500" loading="lazy"></div>
+        <div class="body">
+          <p class="eyebrow">stationsixadv.com</p>
+          <div class="title-row"><span class="ico"><i data-lucide="mountain"></i></span><h3>StationSixADV</h3></div>
+          <p>A rider's field journal for adventure motorcycling. It's written for people past the honeymoon phase, so it skips the gear lists and gets into what actually happens out there and why.</p>
+          <p>Under the hood it's an Eleventy static site with its own small design system (Day and Night color themes, condensed headings, serif body text). Every push to main builds in GitHub Actions and deploys to Azure Static Web Apps.</p>
+          <div class="meta"><span class="tag">Visit the site</span><span class="go">↗</span></div>
         </div>
       </a>
     </section>
