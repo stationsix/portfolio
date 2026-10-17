@@ -232,6 +232,7 @@
     .feature .note { font-size: 0.88rem; color: var(--muted); }
     .feature.plain { box-shadow: var(--shadow); }
     .feature.plain::before { content: none; }
+    .feature + .feature { margin-top: 16px; }
 
     /* ---------- Workbench ---------- */
     .bench { grid-template-columns: repeat(4, 1fr); }
@@ -352,7 +353,7 @@
       <div class="section-head">
         <p class="eyebrow">Sites</p>
         <h2>Websites</h2>
-        <p>Real sites with their own domains, built the same way as everything else here.</p>
+        <p>Real, multi-page sites, built the same way as everything else here.</p>
       </div>
       <a id="card-stationsixadv" class="card has-shot feature plain" href="https://stationsixadv.com" target="_blank" rel="noopener">
         <div class="shot"><img src="img/shots/stationsixadv.jpg" alt="StationSixADV journal homepage in dark mode, with the Why I Ride entry" width="800" height="500" loading="lazy"></div>
@@ -361,6 +362,16 @@
           <div class="title-row"><span class="ico"><i data-lucide="mountain"></i></span><h3>StationSixADV</h3></div>
           <p>A rider's field journal for adventure motorcycling. It's written for people past the honeymoon phase, so it skips the gear lists and gets into what actually happens out there and why.</p>
           <p>Under the hood it's an Eleventy static site with its own small design system (Day and Night color themes, condensed headings, serif body text). Every push to main builds in GitHub Actions and deploys to Azure Static Web Apps.</p>
+          <div class="meta"><span class="tag">Visit the site</span><span class="go">↗</span></div>
+        </div>
+      </a>
+      <a id="card-365-books" class="card has-shot feature plain" href="https://stationsix.github.io/365-books/" target="_blank" rel="noopener">
+        <div class="shot"><img src="img/shots/365-books.jpg" alt="365 Books homepage in dark mode, with the Transcends, Evolves and Expires tags and the scoreboard" width="800" height="500" loading="lazy"></div>
+        <div class="body">
+          <p class="eyebrow">stationsix.github.io/365-books</p>
+          <div class="title-row"><span class="ico"><i data-lucide="book-open"></i></span><h3>365 Books</h3></div>
+          <p>Summaries of 365 essential business books, each turned into prompts you can paste into your own AI assistant. Every key concept is tagged Transcends, Evolves or Expires for the AI era.</p>
+          <p>Under the hood it's an Astro site with one markdown file per book. The build checks every summary against a template and fails if one breaks it, then GitHub Actions publishes each push to main on GitHub Pages.</p>
           <div class="meta"><span class="tag">Visit the site</span><span class="go">↗</span></div>
         </div>
       </a>
@@ -431,11 +442,11 @@
         <p class="eyebrow">Path to production</p>
         <h2>How ideas reach production</h2>
         <p>Every project here follows a thread: which AI tool it started in, where I worked on it, where the code lives, what builds it (sometimes nothing), where it's hosted, and finally a URL you can open.</p>
-        <p>These days every change goes through a pull request, and I check it on a local preview before it merges. StationSixADV goes a step further: GitHub Actions builds it with Eleventy, and Azure spins up a preview copy of the site for each pull request before the merge to main publishes it to Azure Static Web Apps, with the stationsixadv.com domain run through Cloudflare.</p>
+        <p>These days every change goes through a pull request, and I check it on a local preview before it merges. StationSixADV goes a step further: GitHub Actions builds it with Eleventy, and Azure spins up a preview copy of the site for each pull request before the merge to main publishes it to Azure Static Web Apps, with the stationsixadv.com domain run through Cloudflare. 365 Books also builds in GitHub Actions, with Astro, and won't publish if any book summary breaks its template.</p>
       </div>
       <div class="path-wrap">
-        <p class="path-count"><b id="path-total">6</b> shipped</p>
-        <svg id="path-svg" viewBox="0 0 940 410" role="group" aria-label="Each project's path from the AI tool it started in to its live site"></svg>
+        <p class="path-count"><b id="path-total">8</b> shipped</p>
+        <svg id="path-svg" viewBox="0 0 940 464" role="group" aria-label="Each project's path from the AI tool it started in to its live site"></svg>
         <p class="path-hint">Hover or focus a thread to isolate it. Click to jump to its card.</p>
       </div>
     </section>
@@ -447,7 +458,7 @@
       </div>
       <div class="grid bench">
         <div class="card"><p class="eyebrow">Building with</p><p class="tools">Claude&nbsp;Code, Codex, VS&nbsp;Code, GitHub</p></div>
-        <div class="card"><p class="eyebrow">Made from</p><p class="tools">React, Flask, Leaflet, Eleventy</p></div>
+        <div class="card"><p class="eyebrow">Made from</p><p class="tools">React, Flask, Leaflet, Eleventy, Astro</p></div>
         <div class="card"><p class="eyebrow">Hosted on</p><p class="tools">GitHub&nbsp;Pages, Render, Azure&nbsp;Static&nbsp;Web&nbsp;Apps</p></div>
         <div class="card"><p class="eyebrow">Automating with</p><p class="tools">Make</p><p class="aside">n8n is on my radar.</p></div>
       </div>
@@ -471,6 +482,7 @@
       const projects = [
         { id: "icebreaker", color: "#6366f1", live: "Icebreaker Map",  path: ["Claude", "Terminal", "GitHub (public)", "Node + Express", "Render"] },
         { id: "stationsixadv", color: "#dc5a32", live: "StationSixADV", path: ["Claude", "Terminal", "GitHub (public)", "Eleventy + Actions", "Azure Static Web Apps"] },
+        { id: "365-books",  color: "#65a30d", live: "365 Books",       path: ["Claude", "Terminal", "GitHub (public)", "Astro + Actions", "GitHub Pages"] },
         { id: "fred",       color: "#ec4899", live: "Find Fred",       path: ["Claude", "Terminal", "GitHub (public)", "None (static)", "GitHub Pages"] },
         { id: "timeline",   color: "#8b5cf6", live: "AI History",      path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] },
         { id: "era",        color: "#0ea5e9", live: "AI Era Journey",  path: ["Copilot", "VS Code", "GitHub (public)", "None (static)", "GitHub Pages"] },
